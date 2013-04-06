@@ -30,9 +30,9 @@ function getBookName() {
 }
 
 function greasemonkey_main() {
-    //loc = get_read_loc();
-    //book = getBookName();
-    //alert(book + ': at ' + loc);
+    loc = get_read_loc();
+    book = getBookName();
+    alert(book + ': at ' + loc);
     setup_everything();
 }
 setTimeout(greasemonkey_main, 2000);
@@ -76,6 +76,14 @@ function refreshPoseButton() {
     }
 }
 
+function refreshQandApanel() {
+    var pres_loc = get_read_loc();
+    if (last_loc!=pres_loc) {
+        update_panel();
+    }
+    last_loc = pres_loc;
+}
+
 function addPoseButton() {
 //alert('adding pose button');
     doc2=document.getElementById("KindleReaderIFrame").contentDocument;
@@ -105,7 +113,9 @@ function addPoseButton() {
 function addPoseForm() {
 //alert('adding pose form');
 //doc2=document.getElementById("KindleReaderIFrame").contentDocument;
-document.body.innerHTML = '<div id="bcq_bgmask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(100,100,100,0.5);z-index:10000;display:none;"><<div id="bcq_overform" style="border-radius: 15px 15px 15px 15px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(51, 51, 51); padding: 30px; position: absolute;"><form onsubmit="return submitPoseForm()"><p>Submit your question about this book: <i>' + getBookName() + '</i></p><p>Question:</p><textarea name="question-title" cols="60" rows="10" id="bcq_qsubmitinput"></textarea><br/><input type="submit" name="submit" value="Post Question"/><button type="button" onclick="hidePoseForm()">Cancel</button><form></div></div>' + document.body.innerHTML;
+var bgmask_container = document.createElement("div");
+bgmask_container.innerHTML = '<div id="bcq_bgmask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(100,100,100,0.5);z-index:10000;display:none;"><<div id="bcq_overform" style="border-radius: 15px 15px 15px 15px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(51, 51, 51); padding: 30px; position: absolute;"><form onsubmit="return submitPoseForm()"><p>Submit your question about this book: <i>' + getBookName() + '</i></p><p>Question:</p><textarea name="question-title" cols="60" rows="10" id="bcq_qsubmitinput"></textarea><br/><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button type="button" onclick="hidePoseForm()">Cancel</button><form></div></div>';
+document.body.appendChild(bgmask_container);
 // Add button to close this panel
 // Add box for entering email address?
 }
@@ -120,6 +130,7 @@ function hidePoseForm() {
 }
 
 function submitPoseForm() {
+//alert('Submitting question');
     var loc = get_read_loc();
     var qtext = document.getElementById('bcq_qsubmitinput').value;
     var book = getBookName();
@@ -127,7 +138,14 @@ function submitPoseForm() {
 // Check if submission is successful
 // Tell the user whether or not successful
 // Hide the submission box if appropriate
-hidePoseForm();
+//alert('Sending question ' + qtext + ' ' + book + ' ' + loc);
+send_question(qtext, book, loc);
+
+//alert(' question sent');
+document.getElementById('bcq_posesubmitbutton').style.value = 'Question sent';
+document.getElementById('bcq_posesubmitbutton').disabled = 'disabled';
+
+setTimeout(hidePoseForm,1000);
 // Don't refresh the page
 return false;
 }
@@ -138,35 +156,39 @@ return false;
 function make_panel() {
 //alert('making panel');
 
-   document.body.style.background = "white";
+   document.body.style.background = "#fefef4";
 
    // Create the question content panel.
    var container = document.getElementById("KindleReaderContainer");
    var qcontent = document.createElement("div");
-   var qtextarea = document.createElement("textarea");
-   var qforum = document.createElement("div");
+//   var qtextarea = document.createElement("textarea");
+//   var qforum = document.createElement("div");
    
-   qforum.id = "question_forum";
-   qtextarea.rows = "3";
-   qtextarea.cols = "27";
-   qtextarea.id = "question_textarea";
-   qtextarea.style.postition = "absolute";
-   qtextarea.style.top = "300px";
-   qtextarea.style.right = "70px";
+//   qforum.id = "question_forum";
+//   qtextarea.rows = "3";
+//   qtextarea.cols = "27";
+//   qtextarea.id = "question_textarea";
+//   qtextarea.style.postition = "absolute";
+//   qtextarea.style.top = "300px";
+//   qtextarea.style.right = "70px";
    
    qcontent.id = "question_content";
    qcontent.style.float = "left";
    qcontent.style.width = "30%";
+//   qcontent.style.borderLeft="5px solid #333";
    qcontent.isout = "False";
+
+qcontent.innerHTML = '<div id="question_forum"></div>';
+
+
    container.appendChild(qcontent);
-   qcontent.appendChild(qforum);
-   qcontent.appendChild(qtextarea);
+//   qcontent.appendChild(qforum);
+//   qcontent.appendChild(qtextarea);
+
+    
 
 
-<div id="question_content" style="width: 250px; right: 70px; top: 70px; position: absolute; background: none repeat scroll 0% 0% white; display: block;">
-<div id="question_forum">
-<textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px; width: 30%; height: 90px;"></textarea>
-</div>
+   remove_panel();
    
 }
 
@@ -205,7 +227,7 @@ function add_panel() {
    qcontent.style.background = "white";
    qcontent.style.display = "block";
    // Sample text.
-   qforum.innerHTML = "Portland street art dreamcatcher, 3 wolf moon synth banjo american apparel gentrify. Blog ullamco echo park, selfies wes anderson vegan bespoke. Wes anderson iphone cosby sweater, deep v trust fund biodiesel odd future irure twee skateboard. Vero single-origin coffee mcsweeney's next level, high life seitan tousled messenger bag deep v. Marfa gluten-free yr incididunt vinyl, mcsweeney's cosby sweater. Intelligentsia vegan aesthetic, dreamcatcher fashion axe fixie qui. Seitan flannel etsy Austin sint food truck.<br><br>";
+update_panel();
 
    // Reduce size of content panel.
    var frame = document.getElementById("KindleReaderIFrame");
@@ -224,6 +246,17 @@ function toggle_panel() {
        add_panel();
        qcontent.isout = "True";
    }
+}
+
+function update_panel() {
+    loc = get_read_loc();
+    book = getBookName();
+    htmlq = get_the_html_question(book, loc);
+    if (htmlq == "") {
+        htmlq = '<i>No questions here</i>';
+    }
+    qforum = document.getElementById("question_forum");
+    qforum.innerHTML = '<h3>Q&A Forum</h3>' + htmlq + '<form><textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px;"></textarea><input type="submit" value="Add answer" /></form>';
 }
 
 ///////////////////////////

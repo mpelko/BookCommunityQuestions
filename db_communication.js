@@ -74,6 +74,7 @@ function send_answer(answer, question, book_id)
 //wrapper function for stroing the q in the db
 function send_question(question, book_id, location)
 {
+//alert(DEBUG)
     if (DEBUG)
     {
         test_QA_all.push({"book":book_id, "title":question, "location":location, "answers":[]})
@@ -110,12 +111,12 @@ function get_the_right_QA(book_id, location)
     for (var i = 0; i < all_QA.length; i++) 
     {
         Q = all_QA[i];
-        if(!(Q.location<location) && (Q.location-location)<closest_Q.location)
+        if(!(Q.location<location-100) && (Q.location-location)<closest_Q.location)
         {
             closest_Q = Q;
         };
     };
-    if(closest_Q.location-location < 200)
+    if(closest_Q.location-location < 800)
     {
         return closest_Q
     } 
