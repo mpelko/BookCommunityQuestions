@@ -115,8 +115,10 @@ function addPoseForm() {
 //alert('adding pose form');
 //doc2=document.getElementById("KindleReaderIFrame").contentDocument;
 var bgmask_container = document.createElement("div");
-bgmask_container.innerHTML = '<div id="bcq_bgmask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(100,100,100,0.5);z-index:10000;display:none;"><<div id="bcq_overform" style="border-radius: 15px 15px 15px 15px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(51, 51, 51); padding: 30px; position: absolute;"><form onsubmit="return submitPoseForm()"><p>Submit your question about this book: <i>' + getBookName() + '</i></p><p>Question:</p><textarea name="question-title" cols="60" rows="10" id="bcq_qsubmitinput"></textarea><br/><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button type="button" onclick="hidePoseForm()">Cancel</button><form></div></div>';
+bgmask_container.innerHTML = '<div id="bcq_bgmask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(100,100,100,0.5);z-index:10000;display:none;"><<div id="bcq_overform" style="border-radius: 15px 15px 15px 15px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(51, 51, 51); padding: 30px; position: absolute;"><form onsubmit="return false;"><p>Submit your question about this book: <i>' + getBookName() + '</i></p><p>Question:</p><textarea name="question-title" cols="60" rows="10" id="bcq_qsubmitinput"></textarea><br/><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button type="button" onclick="hidePoseForm()">Cancel</button><form></div></div>';
 document.body.appendChild(bgmask_container);
+
+document.getElementById('bcq_posesubmitbutton').addEventListener('click', submitPoseForm);
 // Add button to close this panel
 // Add box for entering email address?
 }
@@ -255,12 +257,17 @@ function update_panel() {
     htmlq = get_the_html_question(book, loc);
     if (htmlq == "") {
         htmlq = '<i>No questions here</i>';
+        butt = false;
     }
     else {
-        htmlq += '<form onsubmit="return sendAnswerForm()"><textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px;"></textarea><input type="submit" value="Add answer" /></form>';
+        butt = true;
+        htmlq += '<form onsubmit="return false;"><textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px;"></textarea><input id="bcq_answbutton" type="submit" value="Add answer" /></form>';
     }
     qforum = document.getElementById("question_forum");
     qforum.innerHTML = '<h3>Q&A Forum</h3>' + htmlq;
+    if (butt) {
+        document.getElementById('bcq_answbutton').addEventListener('click', sendAnswerForm);
+    }
 }
 
 
