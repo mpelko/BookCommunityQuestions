@@ -111,12 +111,12 @@ function get_the_right_QA(book_id, location)
     for (var i = 0; i < all_QA.length; i++) 
     {
         Q = all_QA[i];
-        if(!(Q.location<location-100) && (Q.location-location)<closest_Q.location)
+        if(!(Q.location<location-3) && (Q.location-location)<closest_Q.location)
         {
             closest_Q = Q;
         };
     };
-    if(closest_Q.location-location < 800)
+    if(closest_Q.location-location < 50)
     {
         return closest_Q
     } 
@@ -144,10 +144,13 @@ function get_the_html_question(book_id, location)
             for (var i = 0; i < Q.answers.length; i++) 
             {
                 A = Q.answers[i];
-                html = html.concat("<il>", A, "</il>")
+                html = html.concat("<li>", A, "</li>")
             };
             html = html.concat("</ul>")
-        };
+        }
+        else {
+            html = html.concat("<i>This question is unanswered. Can you help?</i>")
+        }
         return html
     };
 }

@@ -30,9 +30,9 @@ function getBookName() {
 }
 
 function greasemonkey_main() {
-    loc = get_read_loc();
-    book = getBookName();
-    alert(book + ': at ' + loc);
+    //loc = get_read_loc();
+    //book = getBookName();
+    //alert(book + ': at ' + loc);
     setup_everything();
 }
 setTimeout(greasemonkey_main, 2000);
@@ -41,8 +41,8 @@ setTimeout(greasemonkey_main, 2000);
 function setup_everything() {
 //alert('setting up all');
     addPoseForm();
-    setTimeout(setup_newels, 2000);
-    setTimeout(setup_loopers, 2000);
+    setTimeout(setup_newels, 100);
+    setTimeout(setup_loopers, 500);
 }
 
 function setup_newels() {
@@ -60,6 +60,7 @@ function setup_loopers() {
 function run_loopers() {
 //alert('running loopers');
     refreshPoseButton();
+    refreshQandApanel();
 }
 
 function refreshPoseButton() {
@@ -77,11 +78,7 @@ function refreshPoseButton() {
 }
 
 function refreshQandApanel() {
-    var pres_loc = get_read_loc();
-    if (last_loc!=pres_loc) {
-        update_panel();
-    }
-    last_loc = pres_loc;
+    update_panel();
 }
 
 function addPoseButton() {
@@ -156,7 +153,7 @@ return false;
 function make_panel() {
 //alert('making panel');
 
-   document.body.style.background = "#fefef4";
+   document.body.style.background = "#f6f6e8";
 
    // Create the question content panel.
    var container = document.getElementById("KindleReaderContainer");
@@ -256,8 +253,21 @@ function update_panel() {
         htmlq = '<i>No questions here</i>';
     }
     qforum = document.getElementById("question_forum");
-    qforum.innerHTML = '<h3>Q&A Forum</h3>' + htmlq + '<form><textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px;"></textarea><input type="submit" value="Add answer" /></form>';
+    qforum.innerHTML = '<h3>Q&A Forum</h3>' + htmlq + '<form onsubmit="return sendAnswerForm()"><textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px;"></textarea><input type="submit" value="Add answer" /></form>';
 }
+
+
+function sendAnswerForm() {
+    var answer = document.getElementById("question_textarea").value;
+    var book_id = getBookName();
+    var loc = get_read_loc();
+    var qa = get_the_right_QA(book_id, loc)
+    send_answer(answer, qa.title, book_id);
+    document.getElementById("question_textarea").value = ""; 
+    update_panel();   
+    return false;
+}
+
 
 ///////////////////////////
 
