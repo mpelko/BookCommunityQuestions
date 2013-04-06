@@ -78,7 +78,11 @@ function refreshPoseButton() {
 }
 
 function refreshQandApanel() {
-    update_panel();
+    var pres_loc = get_read_loc();
+    if (last_loc!=pres_loc) {
+        update_panel();
+    }
+    last_loc = pres_loc;
 }
 
 function addPoseButton() {
@@ -140,9 +144,10 @@ send_question(qtext, book, loc);
 
 //alert(' question sent');
 document.getElementById('bcq_posesubmitbutton').style.value = 'Question sent';
-document.getElementById('bcq_posesubmitbutton').disabled = 'disabled';
+//document.getElementById('bcq_posesubmitbutton').disabled = 'disabled';
 
 setTimeout(hidePoseForm,1000);
+setTimeout(update_panel,1200);
 // Don't refresh the page
 return false;
 }
@@ -153,7 +158,7 @@ return false;
 function make_panel() {
 //alert('making panel');
 
-   document.body.style.background = "#f6f6e8";
+   document.body.style.background = "#f2f2e2";
 
    // Create the question content panel.
    var container = document.getElementById("KindleReaderContainer");
@@ -175,7 +180,7 @@ function make_panel() {
 //   qcontent.style.borderLeft="5px solid #333";
    qcontent.isout = "False";
 
-qcontent.innerHTML = '<div id="question_forum"></div>';
+qcontent.innerHTML = '<div id="question_forum" style="margin:auto"></div>';
 
 
    container.appendChild(qcontent);
@@ -221,7 +226,6 @@ function add_panel() {
    qcontent.style.top = "70px";
    qcontent.style.position = "absolute";    
    qcontent.style.width = "250px";
-   qcontent.style.background = "white";
    qcontent.style.display = "block";
    // Sample text.
 update_panel();
@@ -252,8 +256,11 @@ function update_panel() {
     if (htmlq == "") {
         htmlq = '<i>No questions here</i>';
     }
+    else {
+        htmlq += '<form onsubmit="return sendAnswerForm()"><textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px;"></textarea><input type="submit" value="Add answer" /></form>';
+    }
     qforum = document.getElementById("question_forum");
-    qforum.innerHTML = '<h3>Q&A Forum</h3>' + htmlq + '<form onsubmit="return sendAnswerForm()"><textarea id="question_textarea" rows="3" cols="27" style="top: 300px; right: 70px;"></textarea><input type="submit" value="Add answer" /></form>';
+    qforum.innerHTML = '<h3>Q&A Forum</h3>' + htmlq;
 }
 
 

@@ -111,12 +111,12 @@ function get_the_right_QA(book_id, location)
     for (var i = 0; i < all_QA.length; i++) 
     {
         Q = all_QA[i];
-        if(!(Q.location<location-3) && (Q.location-location)<closest_Q.location)
+        if(!(Q.location<location-2) && (Q.location-location)<closest_Q.location)
         {
             closest_Q = Q;
         };
     };
-    if(closest_Q.location-location < 50)
+    if(closest_Q.location-location < 25)
     {
         return closest_Q
     } 
