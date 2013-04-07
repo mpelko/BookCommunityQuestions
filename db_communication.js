@@ -111,7 +111,7 @@ function get_the_right_QA(book_id, location)
     for (var i = 0; i < all_QA.length; i++) 
     {
         Q = all_QA[i];
-        if(!(Q.location<location-2) && (Q.location-location)<closest_Q.location)
+        if(!(Q.location<location-1) && (Q.location-location)<closest_Q.location)
         {
             closest_Q = Q;
         };
@@ -149,7 +149,7 @@ function get_the_html_question(book_id, location)
             html = html.concat("</ul>")
         }
         else {
-            html = html.concat("<i>This question is unanswered. Can you help?</i>")
+            html = html.concat("<i style='padding:5px;'>This question is unanswered. Can you help?</i>")
         }
         return html
     };
