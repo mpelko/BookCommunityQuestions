@@ -73,7 +73,7 @@ function refreshPoseButton() {
     }
     else {
 //alert('reset pose class');
-        myElem.className = "kindle_menu_button button_enabled";
+        myElem.className = "kindle_menu_button button_enabled ui-corner-right";
     }
     refreshMenuSep();
 }
@@ -130,7 +130,7 @@ function addPoseButton() {
     popupmenu.appendChild(newsep);
     var newbutton = document.createElement("div");
     newbutton.id = 'bcq_hoverbutton';
-    newbutton.className="kindle_menu_button button_enabled";
+    newbutton.className="kindle_menu_button button_enabled ui-corner-right";
     newbutton.addEventListener('click',showPoseForm);
     var newbuttontext = document.createTextNode("Pose question");
     newbutton.appendChild(newbuttontext);
