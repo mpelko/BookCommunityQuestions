@@ -10,3 +10,4 @@ var test_QA_all=[{"book": "Sidelights on Relativity", "title": "Wait, how are th
 
 var all_QA = "33"
 var last_loc = 0;
+var username = "";
