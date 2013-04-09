@@ -7,6 +7,7 @@
 // @run-at        document-end
 // @grant         none
 // @require globals.js
+// @require db_communication_DEBUG.js
 // @require db_communication.js
 // ==/UserScript==
 // Notes:
