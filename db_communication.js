@@ -155,3 +155,16 @@ function get_the_html_question(book_id, location)
     };
 }
 
+
+function login_as(usr) {
+    username = usr;
+}
+
+function isLoggedIn() {
+    if (username=="") {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
