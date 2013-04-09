@@ -19,6 +19,7 @@ function get_read_loc() {
     var loct = doc2.getElementById('kindleReader_footer_message').textContent;
     var patt=/% · (\d+) of/;
     var matches = patt.exec(loct);
+    if (matches==null) {return null};
     var loc = matches[1];
     return loc;
 }
@@ -180,7 +181,7 @@ function submitPoseForm() {
 //alert('Sending question ' + qtext + ' ' + book + ' ' + loc);
 
 // If not logged in, show login form and stop
-if (!check_login()) return false;
+if (!check_login()) {return false};
 
 // If logged in, send the question and update HTML
 send_question(qtext, book, loc);
@@ -276,8 +277,10 @@ function make_panel() {
     var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
     var rightTurner = doc2.getElementById('kindleReader_pageTurnAreaRight');
     
-    rightTurner.style.left="";
-    rightTurner.style.right="0";
+    if (rightTurner != null) {
+        rightTurner.style.left="";
+        rightTurner.style.right="0";
+    }
 }
 
 
@@ -337,6 +340,7 @@ function update_panel() {
         htmlq += '<form onsubmit="return false;"><textarea id="question_textarea" style="width:100%;height:100px;"></textarea><input id="bcq_answbutton" type="submit" value="Add answer" /></form>';
     }
     var qforum = document.getElementById("question_forum");
+    if (qforum==null) {return false};
     qforum.innerHTML = '<h3>Q&A Forum</h3>' + htmlq;
     if (butt) {
         document.getElementById('bcq_answbutton').addEventListener('click', sendAnswerForm);
@@ -351,7 +355,7 @@ function sendAnswerForm() {
     var qa = get_the_right_QA(book_id, loc)
     
     // If not logged in, show login form and stop
-    if (!check_login()) return false;
+    if (!check_login()) {return false};
     
     // If logged in, send the question and update HTML
     send_answer(answer, qa.title, book_id);
