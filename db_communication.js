@@ -156,6 +156,33 @@ function get_the_html_question(book_id, location)
 }
 
 
+function get_the_html_questions(book_id)
+{
+    html = '';
+    for (var j=0; j<QA.length; j++) {
+        Q = QA[j];
+        html += '<div id="bcq_q' + Q.questionID + '" qid="' + Q.questionID + '">';
+        html += '<h4>' + Q.title + '</h4>';
+        if(Q.answers.length > 0)
+        {
+            html += '<ul class="bcq_answers">';
+            for (var i = 0; i < Q.answers.length; i++) 
+            {
+                A = Q.answers[i];
+                html += '<li>' + A + '</li>';
+            };
+            html += '</ul>';
+        }
+        else {
+            html += '<i style="padding:5px;">This question is unanswered. Can you help?</i>';
+        }
+        html += '<form id="bcq_q' + Q.questionID + '_ansform" onsubmit="return false;"><textarea id="question_textarea" style="width:100%;height:100px;"></textarea><input id="bcq_answbutton" type="submit" value="Add answer" /></form>';
+        html += '</div>';
+    }
+    return html;
+}
+
+
 function login_as(usr) {
     username = usr;
 }
