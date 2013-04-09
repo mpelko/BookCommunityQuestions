@@ -94,7 +94,7 @@ function get_the_right_QA(book_id, location)
 function get_the_html_question(book_id, location)
 {
     Q = get_the_right_QA(book_id, location)
-        
+
     if(!("title" in Q))
     {
         return "";
@@ -108,7 +108,7 @@ function get_the_html_question(book_id, location)
             html = html.concat("<ul>")
             for (var i = 0; i < Q.answers.length; i++) 
             {
-                A = Q.answers[i];
+                A = Q.answers[i].text;
                 html = html.concat("<li>", A, "</li>")
             };
             html = html.concat("</ul>")

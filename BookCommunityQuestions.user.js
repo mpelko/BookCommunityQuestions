@@ -46,6 +46,7 @@ function setup_everything() {
     addPoseForm();
     setup_newels();
     setTimeout(setup_loopers, 500);
+    current_book_id = get_book_id(getBookName());
 }
 
 function setup_newels() {
@@ -126,7 +127,19 @@ function addPoseButton() {
 //        alert('No doc2');
         return false;
     }
-    var popupmenu = doc2.getElementById('kindle_menu_border');
+    var popupparent = doc2.getElementById('kindleReader_menu_contextMenu');
+    if (popupparent == null) {
+//        alert('No kindleReader_menu_contextMenu');
+        return false;
+    }
+    var x = popupparent.childNodes;
+    popupmenu = null;
+    for (i=0;i<x.length;i++) {
+        if (x[i].id == 'kindle_menu_border') {
+            popupmenu = x[i];
+            break;
+        }
+    }
     if (popupmenu == null) {
 //        alert('No kindle_menu_border');
         return false;
@@ -174,7 +187,6 @@ function submitPoseForm() {
 //alert('Submitting question');
     var loc = get_read_loc();
     var qtext = document.getElementById('bcq_qsubmitinput').value;
-    var book = getBookName();
 // Do something with this to submit it
 // Check if submission is successful
 // Tell the user whether or not successful
@@ -185,7 +197,7 @@ function submitPoseForm() {
 if (!check_login()) {return false};
 
 // If logged in, send the question and update HTML
-send_question(qtext, book, loc);
+send_question(qtext, getUsername(), current_book_id, loc);
 
 //alert(' question sent');
 document.getElementById('bcq_posesubmitbutton').value = 'Question sent';
@@ -330,8 +342,7 @@ function toggle_panel() {
 
 function update_panel() {
     var loc = get_read_loc();
-    var book = getBookName();
-    var htmlq = get_the_html_question(book, loc);
+    var htmlq = get_the_html_question(current_book_id, loc);
     if (htmlq == "") {
         htmlq = '<i>No questions here</i>';
         butt = false;
@@ -351,15 +362,14 @@ function update_panel() {
 
 function sendAnswerForm() {
     var answer = document.getElementById("question_textarea").value;
-    var book_id = getBookName();
     var loc = get_read_loc();
-    var qa = get_the_right_QA(book_id, loc)
+    var qa = get_the_right_QA(current_book_id, loc)
     
     // If not logged in, show login form and stop
     if (!check_login()) {return false};
     
     // If logged in, send the question and update HTML
-    send_answer(answer, qa.title, book_id);
+    send_answer(answer, getUsername(), qa.questionID, current_book_id);
     document.getElementById("question_textarea").value = ""; 
     update_panel();   
     return false;

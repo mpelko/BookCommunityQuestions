@@ -1,5 +1,5 @@
 var QA_ALL_DEBUG=[{questionID:0, bookID: 0, "username": "scottclowe", "title": "Wait, how are the properties of light similar to those of waves?", "location":26, "answers": [{"text":"Light reflects in the same manner as a wave would.", "username": "mpelko"}, {"text":"Light exhibits the Doppler effect.","username": "mpelko"}]},
-                 {questionID:1, bookID: 0, "username": "mpelko", "title": "What's the ether?", "location":35, "answers": [{"text":"James Maxwell thought light moved through a medium called the ether. He was wrong.", "username": "mpelko"}, {"text":"The Michelson-Morley experiment was the first strong evidence against the ether theory.", "username": "mpelko"}]},
+                 {questionID:1, bookID: 1, "username": "mpelko", "title": "What's the ether?", "location":35, "answers": [{"text":"James Maxwell thought light moved through a medium called the ether. He was wrong.", "username": "mpelko"}, {"text":"The Michelson-Morley experiment was the first strong evidence against the ether theory.", "username": "mpelko"}]},
                  //{"bookID": 0, "username": "mpelko", "title": "What's so special about the special theory of relativity?", "location":73, "answers": ["The special theory of relativity postulates that all motion is relative and the speed of light is constant in all refernce frames."]},
                  //{"bookID": 0, "username": "acprice", "title": "How is general relativity different from special relativity?", "location":147, "answers": ["General relativity combines special relativity with Einstein's theory of gravity as the curvature of space-time."]},
                  //{"bookID": 0, "username": "dabelman", "title": "Is how the flux capacitor works?", "location":233, "answers": ["No. The flux capacitor is not real. It only exists in Back to the Future.", "I think so."]},
@@ -41,12 +41,12 @@ function send_quesiton_DEBUG(question, usr, book_id, location)
     QA_ALL_DEBUG.push({"questionID":Qid, "bookID":book_id, "title":question, "username":usr, "location":location, "answers":[]})
 }
     
-function send_answer_DEBUG(answer, usr, question, book_id)
+function send_answer_DEBUG(answer, usr, q_id, book_id)
 {
     for (var i = 0; i < QA_ALL_DEBUG.length; i++) 
     {
         Q = QA_ALL_DEBUG[i];
-        if(Q.bookID==book_id && Q.title==question)
+        if(Q.bookID==book_id && Q.questionID==q_id)
         {
             Q.answers.push({"text":answer, "username":usr});
         };
