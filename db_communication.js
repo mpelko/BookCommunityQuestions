@@ -1,91 +1,56 @@
 
-//wrapper function taking the book_id and returning the html version of QA
-
-
-//function returns all hte questions and answers from a book
-//TODO: implement some sort of cashing, so we don't need all the qa every time.
-
-function get_all_QA_html()
+function get_book_id(book_title)
 {
- return []   
-}
-
-
-function test_QA_get_all(book_id)
-{
-    QAs = []
-    for (var i = 0; i < test_QA_all.length; i++) 
+    if (DEBUG)
     {
-        Q = test_QA_all[i];
-        if(Q.book==book_id)
-        {
-            QAs.push(Q);
-        };
+        return get_book_id_DEBUG(book_title);
+    }
+    else {
+        if(using_AWSDB){
+            return get_book_id_AWSDB(book_title);
+        }
     };    
-    return QAs
-}
-
-function send_answer_test(answer, question, book_id)
-{
-    for (var i = 0; i < test_QA_all.length; i++) 
-    {
-        Q = test_QA_all[i];
-        if(Q.book==book_id && Q.title==question)
-        {
-            Q.answers.push(answer);
-        };
-    };        
 }
 
 function get_all_QA(book_id)
 {
     if (DEBUG)
     {
-        return test_QA_get_all(book_id);
+        return QA_get_all_DEBUG(book_id);
     }
     else {
-        if(using_Forum_asDB){
-            return get_QA_all_forum(book_id);
+        if(using_AWSDB){
+            return get_QA_all_AWSDB(book_id);
         }
-        else{
-            return get_QA_all_DB(book_id);
-        };
     };
 }
 
-
-function send_answer(answer, question, book_id)
+function send_answer(answer, usr, questionID, book_id)
 {
     if (DEBUG)
     {
-        send_answer_test(answer, question, book_id);
+        send_answer_DEBUG(answer, usr, questionID, book_id);
     }
     else {
-        if(using_Forum_asDB){
-            send_answer_forum(question, book_id);
+        if(using_AWSDB){
+            send_answer_AWSDB(answer, usr, questionID, book_id);
         }
-        else{
-            send_answer_DB(question, book_id);
-        };
     };    
     
 }
 
 //wrapper function for stroing the q in the db
-function send_question(question, book_id, location)
+function send_question(question, usr, book_id, location)
 {
 //alert(DEBUG)
     if (DEBUG)
     {
-        test_QA_all.push({"book":book_id, "title":question, "location":location, "answers":[]})
+        send_quesiton_DEBUG(question, usr, book_id, location)
     }
     else {
-        if(using_Forum_asDB){
-            send_question_forum(question, book_id, location);
+        if(using_AWSDB){
+            send_question_AWSDB(question, usr, book_id, location);
         }
-        else{
-            get_QA_html_DB(book_id);
-        };
     };    
 }
 
@@ -129,7 +94,7 @@ function get_the_right_QA(book_id, location)
 function get_the_html_question(book_id, location)
 {
     Q = get_the_right_QA(book_id, location)
-    
+        
     if(!("title" in Q))
     {
         return "";
