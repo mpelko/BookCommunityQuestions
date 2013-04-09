@@ -161,10 +161,14 @@ function login_as(usr) {
 }
 
 function isLoggedIn() {
-    if (username=="") {
+    if (getUsername()=="") {
         return false;
     }
     else {
         return true;
     }
+}
+
+function getUsername() {
+    return username;
 }

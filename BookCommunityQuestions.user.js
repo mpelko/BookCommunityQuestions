@@ -210,55 +210,16 @@ function check_login() {
         return true;
     }
     else {
-        showLoginForm();
-        return false;
+        var usr = prompt("Please enter your username","");
+        if (usr!=null && usr!="") {
+            login_as(usr);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 }
-
-// Adds Background mask AND Login form
-function addLoginForm() {
-//alert('adding login form');
-//doc2=document.getElementById("KindleReaderIFrame").contentDocument;
-var bgmask_container = document.createElement("div");
-bgmask_container.innerHTML = '<div id="bcq_loginmask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(50,50,50,0.7);z-index:10001;display:none;"><div id="bcq_loginform" style="border-radius: 25px; z-index: 10001; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(40, 40, 40); padding: 30px; position: absolute;"><form onsubmit="return false;"><h3>Login to Q&A forum</h3><p>Username: <input id="bcq_usrsubmitinput" name="username" /><br/><div style="margin:auto;text-align:center;"><input id="bcq_loginsubmitbutton" type="submit" name="submit" value="Login"/><button id="bcq_logincancelbutton" type="button">Cancel</button></div><form></div></div>';
-document.body.appendChild(bgmask_container);
-
-document.getElementById('bcq_loginsubmitbutton').addEventListener('click', submitLoginForm);
-document.getElementById('bcq_logincancelbutton').addEventListener('click', hideLoginForm);
-// Add box for entering email address?
-}
-
-function showLoginForm() {
-    document.getElementById('bcq_loginmask').style.display = 'block';
-    document.getElementById('bcq_loginform').style.display = 'block';
-}
-
-function hideLoginForm() {
-    document.getElementById('bcq_loginmask').style.display = 'none';
-    document.getElementById('bcq_loginform').style.display = 'none';
-}
-
-function submitLoginForm() {
-    //alert('Submitting login');
-    var username = document.getElementById('bcq_usrsubmitinput').value;
-    login_as(username);
-
-    //alert(' question sent');
-    document.getElementById('bcq_loginsubmitbutton').value = 'Logging in';
-    document.getElementById('bcq_loginsubmitbutton').disabled = true;
-
-    setTimeout(hideLoginForm,200);
-    setTimeout(resetLoginForm,300);
-    // Don't refresh the page
-    return false;
-}
-
-function resetLoginForm() {
-    document.getElementById('bcq_loginsubmitbutton').value = 'Login';
-    document.getElementById('bcq_loginsubmitbutton').disabled = false;
-    document.getElementById('bcq_usrsubmitinput').value = '';
-}
-
 
 // --------------------- Forum panel ------------------------
 
