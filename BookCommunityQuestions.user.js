@@ -253,7 +253,7 @@ function add_qmark_button() {
 function make_panel() {
 //alert('making panel');
 
-    document.body.style.background = "#f2f2e2";
+    document.body.style.background = "#e8e8e0"; // "#f2f2e2";
 
    // Create the question content panel.
     var container = document.getElementById("KindleReaderContainer");
