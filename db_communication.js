@@ -1,91 +1,56 @@
 
-//wrapper function taking the book_id and returning the html version of QA
-
-
-//function returns all hte questions and answers from a book
-//TODO: implement some sort of cashing, so we don't need all the qa every time.
-
-function get_all_QA_html()
+function get_book_id(book_title)
 {
- return []   
-}
-
-
-function test_QA_get_all(book_id)
-{
-    QAs = []
-    for (var i = 0; i < test_QA_all.length; i++) 
+    if (DEBUG)
     {
-        Q = test_QA_all[i];
-        if(Q.book==book_id)
-        {
-            QAs.push(Q);
-        };
+        return get_book_id_DEBUG(book_title);
+    }
+    else {
+        if(using_AWSDB){
+            return get_book_id_AWSDB(book_title);
+        }
     };    
-    return QAs
-}
-
-function send_answer_test(answer, question, book_id)
-{
-    for (var i = 0; i < test_QA_all.length; i++) 
-    {
-        Q = test_QA_all[i];
-        if(Q.book==book_id && Q.title==question)
-        {
-            Q.answers.push(answer);
-        };
-    };        
 }
 
 function get_all_QA(book_id)
 {
     if (DEBUG)
     {
-        return test_QA_get_all(book_id);
+        return QA_get_all_DEBUG(book_id);
     }
     else {
-        if(using_Forum_asDB){
-            return get_QA_all_forum(book_id);
+        if(using_AWSDB){
+            return get_QA_all_AWSDB(book_id);
         }
-        else{
-            return get_QA_all_DB(book_id);
-        };
     };
 }
 
-
-function send_answer(answer, question, book_id)
+function send_answer(answer, usr, questionID, book_id)
 {
     if (DEBUG)
     {
-        send_answer_test(answer, question, book_id);
+        send_answer_DEBUG(answer, usr, questionID, book_id);
     }
     else {
-        if(using_Forum_asDB){
-            send_answer_forum(question, book_id);
+        if(using_AWSDB){
+            send_answer_AWSDB(answer, usr, questionID, book_id);
         }
-        else{
-            send_answer_DB(question, book_id);
-        };
     };    
     
 }
 
 //wrapper function for stroing the q in the db
-function send_question(question, book_id, location)
+function send_question(question, usr, book_id, location)
 {
 //alert(DEBUG)
     if (DEBUG)
     {
-        test_QA_all.push({"book":book_id, "title":question, "location":location, "answers":[]})
+        send_question_DEBUG(question, usr, book_id, location)
     }
     else {
-        if(using_Forum_asDB){
-            send_question_forum(question, book_id, location);
+        if(using_AWSDB){
+            send_question_AWSDB(question, usr, book_id, location);
         }
-        else{
-            get_QA_html_DB(book_id);
-        };
     };    
 }
 
@@ -129,7 +94,7 @@ function get_the_right_QA(book_id, location)
 function get_the_html_question(book_id, location)
 {
     Q = get_the_right_QA(book_id, location)
-    
+
     if(!("title" in Q))
     {
         return "";
@@ -143,8 +108,7 @@ function get_the_html_question(book_id, location)
             html = html.concat("<ul>")
             for (var i = 0; i < Q.answers.length; i++) 
             {
-                A = Q.answers[i];
-                html = html.concat("<li>", A, "</li>")
+                html = html.concat("<li>", Q.answers[i].text, "</li>")
             };
             html = html.concat("</ul>")
         }
@@ -155,3 +119,54 @@ function get_the_html_question(book_id, location)
     };
 }
 
+
+function get_the_html_questions(book_id) {
+    html = '<div id="bcq_q-1"><p style="font-style:italic;">No questions here.</p></div>';
+    allQA = get_all_QA(book_id);
+    for (var j=0; j<allQA.length; j++) {
+        Q = allQA[j];
+        html += html_qa(Q);
+    }
+    return html;
+}
+
+function html_qa(Q) {
+    html = '<div id="bcq_q' + Q.questionID + '" qid="' + Q.questionID + '">';
+    html += '<h4>' + Q.title + ' <span style="color:grey;font-size:small;font-style:italic;"> - ' + Q.username + '</span>' + '</h4>';
+    html += html_answers(Q.answers);
+    html += '<form id="bcq_q' + Q.questionID + '_ansform" onsubmit="return false;"><textarea id="bcq_q' + Q.questionID + '_ta" style="width:100%;height:100px;"></textarea><input id="bcq_q' + Q.questionID + '_answbutton" qid="' + Q.questionID + '" type="submit" value="Add answer" /></form>';
+    html += '</div>';
+    return html;
+}
+
+function html_answers(answs) {
+    if(answs.length > 0) {
+        html = '<ul is_answs=true class="bcq_answers">';
+        for (var i = 0; i < answs.length; i++)  {
+            html += '<li>' + answs[i].text + '<span style="color:grey;font-size:small;font-style:italic;"> - ' + answs[i].username + '</span>' + '</li>';
+        };
+        html += '</ul>';
+    }
+    else {
+        html = '<i is_answs=true style="padding:5px;">This question is unanswered. Can you help?</i>';
+    }
+    return html;
+}
+
+
+function login_as(usr) {
+    username = usr;
+}
+
+function isLoggedIn() {
+    if (getUsername()=="") {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function getUsername() {
+    return username;
+}
