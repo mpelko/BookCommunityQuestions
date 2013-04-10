@@ -23,6 +23,15 @@ response = """
 </head>
 <body id="sample">
 
+<form name="getBookID" action="/getbookid/" method="GET">Enter book title to get its id. If book doen't exit, it will be created and its id will be returned: <br/>
+Title: 
+<input type="text" name="booktitle" value=""> <br/>
+<input type="submit" value="Get bookID">
+</form>
+<br/>
+<br/>
+
+
 <form name="getQuestions" action="/getquestions/" method="GET">Enter bookID to get questions: <br/>
 bookID: 
 <input type="text" name="bookID" value=""> <br/>
@@ -143,7 +152,34 @@ def addAnswer(environ, start_response):
     for item in questionsForB1:
         aux = aux + str(item) + '\n'
     return [aux]
-    
+
+def getBookID(environ, start_response):
+    parameters = parse_qs(environ.get('QUERY_STRING', ''))
+    if 'booktitle' in parameters:
+        import json
+        bookTitle = escape(parameters['booktitle'][0])
+        conn = boto.dynamodb.connect_to_region(
+            'us-west-2',
+            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
+            aws_secret_access_key='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')
+        status = '200 OK'
+        headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+        qtable = conn.get_table('Books')
+        jsonlist = []
+        books = conn.scan(qtable, scan_filter={'title': condition.EQ(bookTitle)})
+        start_response(status, headers)
+        for book in books:
+            jsondict = {"bookID":book["bookID"], "title":book["title"]}
+            jsonlist.append(jsondict)
+        response = json.dumps(jsonlist)
+        if 'callback' in parameters:
+            callback_function = escape(parameters['callback'][0])
+            return jsonp(callback_function, response)
+        else:
+            return [response]
+    else:
+        return not_found(environ, start_response)
+
 def getQuestions(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
     if 'bookID' in parameters:
@@ -154,7 +190,7 @@ def getQuestions(environ, start_response):
             aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('content-type','application/json'), ('charset','UTF-8')]
+        headers = [('content-type','application/javascript'), ('charset','UTF-8')]
         qtable = conn.get_table('Questions')
         jsonlist = []
         questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(int(bookID))})
@@ -163,7 +199,11 @@ def getQuestions(environ, start_response):
             jsondict = {"questionID":question["questionID"], "question":question["question"], "location":int(question["location"])}
             jsonlist.append(jsondict)
         response = json.dumps(jsonlist)
-        return [response]
+        if 'callback' in parameters:
+            callback_function = escape(parameters['callback'][0])
+            return jsonp(callback_function, response)
+        else:
+            return [response]
     else:
         return not_found(environ, start_response)
     
@@ -177,7 +217,7 @@ def getAnswers(environ, start_response):
             aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('content-type','application/json'), ('charset','UTF-8')]
+        headers = [('content-type','application/javascript'), ('charset','UTF-8')]
         qtable = conn.get_table('Answers')
         jsonlist = []
         answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
@@ -186,7 +226,11 @@ def getAnswers(environ, start_response):
             jsondict = {"answerID":answer["answerID"], "answer":answer["answer"]}
             jsonlist.append(jsondict)
         response = json.dumps(jsonlist)
-        return [response]
+        if 'callback' in parameters:
+            callback_function = escape(parameters['callback'][0])
+            return jsonp(callback_function, response)
+        else:
+            return [response]
     else:
         return not_found(environ, start_response)
     
@@ -195,11 +239,17 @@ def not_found(environ, start_response):
     start_response('404 NOT FOUND', [('Content-Type', 'text/plain')])
     return ['Not Found']
     
+def jsonp(callback, dictionary):
+    if (callback):
+        return "%s(%s)" % (callback, dictionary)
+    return dictionary
+    
 urls = [
     (r'^$', index),
     (r'addbook/?$', addBook),
     (r'addquestion/?$', addQuestion),
     (r'addanswer/?$', addAnswer),
+    (r'getbookid/?$', getBookID),
     (r'getquestions/?$', getQuestions),
     (r'getanswers/?$', getAnswers),
 ]
