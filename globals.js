@@ -1,6 +1,6 @@
-var DEBUG=false
+var DEBUG=true
 var using_AWSDB=true
-var all_QA = []
+var allQA = []
 var last_loc = 0;
 var username = ""
 var current_book_id = ""

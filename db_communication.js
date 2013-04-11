@@ -1,26 +1,26 @@
 
-function get_book_id(book_title)
+function update_book_id(book_title)
 {
     if (DEBUG)
     {
-        return get_book_id_DEBUG(book_title);
+        update_book_id_DEBUG(book_title);
     }
     else {
         if(using_AWSDB){
-            return get_book_id_AWSDB(book_title);
+            update_book_id_AWSDB(book_title);
         }
     };    
 }
 
-function get_all_QA(book_id)
+function update_all_QA(book_id)
 {
     if (DEBUG)
     {
-        return QA_get_all_DEBUG(book_id);
+        return QA_update_all_DEBUG(book_id);
     }
     else {
         if(using_AWSDB){
-            return QA_get_all_AWSDB(book_id);
+            return QA_update_all_AWSDB(book_id);
         }
     };
 }
@@ -56,11 +56,11 @@ function send_question(question, usr, book_id, location)
 
 function get_QA_subset(book_id, min_loc, max_loc)
 {
-    all_QA = get_all_QA(book_id);
+    var QAs = allQA
     var subset = [];
-    for (var i = 0; i < all_QA.length; i++) 
+    for (var i = 0; i < QAs.length; i++) 
     {
-        Q = all_QA[i];
+        Q = QAs[i];
         if(Q.location<max_loc && Q.location>min_loc)
         {
             subset.push(Q);
@@ -71,11 +71,11 @@ function get_QA_subset(book_id, min_loc, max_loc)
 
 function get_the_right_QA(book_id, location)
 {
-    all_QA = get_all_QA(book_id);
+    var QAs = allQA
     closest_Q = {"location": location+1000}
-    for (var i = 0; i < all_QA.length; i++) 
+    for (var i = 0; i < QAs.length; i++) 
     {
-        Q = all_QA[i];
+        Q = QAs[i];
         if(!(Q.location<location-1) && (Q.location-location)<closest_Q.location)
         {
             closest_Q = Q;
@@ -122,9 +122,9 @@ function get_the_html_question(book_id, location)
 
 function get_the_html_questions(book_id) {
     html = '<div id="bcq_q-1"><p style="font-style:italic;">No questions here.</p></div>';
-    allQA = get_all_QA(book_id);
-    for (var j=0; j<allQA.length; j++) {
-        Q = allQA[j];
+    var QAs = allQA
+    for (var j=0; j<QAs.length; j++) {
+        Q = QAs[j];
         html += html_qa(Q);
     }
     return html;

@@ -58,12 +58,12 @@ function greasemonkey_main() {
     //alert(book + ': at ' + loc);
     setup_everything();
 }
-setTimeout(greasemonkey_main, 1800);
+setTimeout(greasemonkey_main, 3800);
 
 
 function setup_everything() {
 //alert('setting up all');
-    current_book_id = get_book_id(getBookName());
+    update_book_id(getBookName());
     addPoseForm();
     setup_newels();
     setTimeout(setup_loopers, 500);
@@ -89,6 +89,8 @@ function run_loopers() {
 }
 
 function run_long_loopers() {
+    //console.log(allQA)
+    //console.log(current_book_id)
     updatePanelQA();
 }
 
@@ -337,9 +339,9 @@ function resetPanel() {
 
 
 function makePanelClicky() {
-    allQA = get_all_QA(current_book_id);
-    for (var j=0; j<allQA.length; j++) {
-        Q = allQA[j];
+    var QAs = allQA
+    for (var j=0; j<QAs.length; j++) {
+        Q = QAs[j];
         inputid = 'bcq_q' + Q.questionID + '_answbutton';
         document.getElementById(inputid).qid = Q.questionID;
         document.getElementById(inputid).addEventListener('click', sendAnswerForm);
@@ -370,7 +372,7 @@ function showPanel() {
    // Give the panel dimensions
    qcontent.style.display = "block";
    // Sample text.
-    updatePanel();
+   updatePanel();
 
    // Reduce size of content panel.
    var frame = document.getElementById("KindleReaderIFrame");
@@ -422,9 +424,10 @@ function updatePanelQA() {
     var qforum = document.getElementById("question_forum");
     if (qforum==null) {return false};
     
-    allQA = get_all_QA(current_book_id);
-    for (var j=0; j<allQA.length; j++) {
-        Q = allQA[j];
+    update_all_QA(current_book_id);
+    var QAs = allQA
+    for (var j=0; j<QAs.length; j++) {
+        Q = QAs[j];
         divid = 'bcq_q' + Q.questionID;
         qdiv = document.getElementById(divid);
         if (qdiv==null) {
@@ -456,11 +459,11 @@ function updatePanelQA() {
 
 
 function updatePanelLoc() {
-    allQA = get_all_QA(current_book_id);
+    var QAs = allQA
     location = get_read_loc();
     nshown = 0;
-    for (var j=0; j<allQA.length; j++) {
-        Q = allQA[j];
+    for (var j=0; j<QAs.length; j++) {
+        Q = QAs[j];
         divid = 'bcq_q' + Q.questionID;
         qdiv = document.getElementById(divid);
         if (qdiv==null) {

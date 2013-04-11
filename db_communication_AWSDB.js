@@ -1,43 +1,59 @@
 
-function get_book_id_AWSDB(book_title)
+function update_book_id_AWSDB(book_title)
 {
     var url = "http://127.0.0.1:8080/get/bookID?title="+book_title
-    
-    alert(book_title)
     
     var book_id = ""
     
     function handle_JSON(data){
-        book_id=data["bid"]
+        current_book_id=data["bid"]
     }
     
     $.getJSON( url + "&callback=?", null,  handle_JSON);
-    return book_id
 }
 
-function QA_get_all_AWSDB(book_id)
+function QA_update_all_AWSDB(book_id)
 {
+    if(book_id == ""){
+        return
+    }
+    
     var url = "http://127.0.0.1:8080/get/QAs?bid="+book_id
     //var url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com/getquestions?bookID=" + book_id
     
-    var QAs = ""
     function handle_JSON(data){
-        alert(Object.keys(data))
-        QAs = data["QAs"]
+        allQA = data["QAs"]
     }
     
-    alert(url)
-    
-    $.getJSON( url + "?callback=?", null,  handle_JSON);
-    return QAs
+    $.getJSON( url + "&callback=?", null,  handle_JSON);
 }
 
 function send_question_AWSDB(question, usr, book_id, location)
 {
-    // TODO: implement
+
+    //var url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com/getquestions?bookID=" + book_id
+    var url = "http://127.0.0.1:8080/submit/Q"
+    var data = {"title":question, "username":usr, "bid":book_id, "location":location}
+    
+    function handle_JSON(data){
+        // could be used to implement what to do with the server response, if needed
+        return
+    }
+        
+    $.getJSON( url + "?callback=?", data);
+
 }
     
 function send_answer_AWSDB(answer, usr, q_id, book_id)
 {
-    // TODO: implement
+    //var url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com/getquestions?bookID=" + book_id
+    var url = "http://127.0.0.1:8080/submit/A"
+    var data = {"text":answer, "username":usr, "bid":book_id, "qid":q_id}
+    
+    function handle_JSON(data){
+        // could be used to implement what to do with the server response, if needed
+        return
+    }
+        
+    $.getJSON( url + "?callback=?", data);
 }

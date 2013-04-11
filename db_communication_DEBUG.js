@@ -11,19 +11,20 @@ var QA_ALL_DEBUG=[{questionID:0, bookID: 0, "username": "scottclowe", "title": "
 
 var BOOKS_ALL_DEBUG={0:"Sidelights on Relativity", 1:"The Phantom of the Opera"}
 
-function get_book_id_DEBUG(book_title)
+function update_book_id_DEBUG(book_title)
 {
     for (var id in BOOKS_ALL_DEBUG)
         if(BOOKS_ALL_DEBUG[id]==book_title)
         {
-            return id
+            current_book_id = id
+            return
         }
     new_id = Object.keys(BOOKS_ALL_DEBUG).length
     BOOKS_ALL_DEBUG[new_id]=book_title
-    return new_id
+    current_book_id = new_id
 }
 
-function QA_get_all_DEBUG(book_id)
+function QA_update_all_DEBUG(book_id)
 {
     QAs = []
     for (var i = 0; i < QA_ALL_DEBUG.length; i++) 
@@ -34,7 +35,7 @@ function QA_get_all_DEBUG(book_id)
             QAs.push(Q);
         };
     };
-    return QAs
+    allQA = QAs
 }
 
 function send_question_DEBUG(question, usr, book_id, location)
