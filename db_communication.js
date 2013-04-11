@@ -9,6 +9,12 @@ function update_book_id(book_title)
         if(using_AWSDB){
             update_book_id_AWSDB(book_title);
         }
+        else{        
+            if(using_test_server){
+                update_book_id_test_server(book_title);
+            }
+        };
+
     };    
 }
 
@@ -22,6 +28,12 @@ function update_all_QA(book_id)
         if(using_AWSDB){
             return QA_update_all_AWSDB(book_id);
         }
+        else{        
+            if(using_test_server){
+                QA_update_all_test_server(book_id);
+            }
+        };
+
     };
 }
 
@@ -35,7 +47,13 @@ function send_answer(answer, usr, questionID, book_id)
         if(using_AWSDB){
             send_answer_AWSDB(answer, usr, questionID, book_id);
         }
-    };    
+        else{        
+            if(using_test_server){
+                send_answer_test_server(answer, usr, questionID, book_id);
+            }
+        };
+    };
+    
     
 }
 
@@ -51,6 +69,11 @@ function send_question(question, usr, book_id, location)
         if(using_AWSDB){
             send_question_AWSDB(question, usr, book_id, location);
         }
+        else{        
+            if(using_test_server){
+                send_question_test_server(question, usr, book_id, location);
+            }
+        };
     };    
 }
 

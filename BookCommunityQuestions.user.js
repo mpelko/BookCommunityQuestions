@@ -8,6 +8,7 @@
 // @grant         none
 // @require globals.js
 // @require db_communication_DEBUG.js
+// @require db_communication_test_server.js
 // @require db_communication_AWSDB.js
 // @require db_communication.js
 // ==/UserScript==
