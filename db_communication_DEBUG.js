@@ -35,7 +35,7 @@ function QA_get_all_DEBUG(book_id)
     return QAs
 }
 
-function send_quesiton_DEBUG(question, usr, book_id, location)
+function send_question_DEBUG(question, usr, book_id, location)
 {
     Qid = QA_ALL_DEBUG[QA_ALL_DEBUG.length-1].questionID;
     QA_ALL_DEBUG.push({"questionID":Qid, "bookID":book_id, "title":question, "username":usr, "location":location, "answers":[]})

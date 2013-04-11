@@ -20,7 +20,7 @@ function get_all_QA(book_id)
     }
     else {
         if(using_AWSDB){
-            return get_QA_all_AWSDB(book_id);
+            return QA_get_all_AWSDB(book_id);
         }
     };
 }
@@ -45,7 +45,7 @@ function send_question(question, usr, book_id, location)
 //alert(DEBUG)
     if (DEBUG)
     {
-        send_quesiton_DEBUG(question, usr, book_id, location)
+        send_question_DEBUG(question, usr, book_id, location)
     }
     else {
         if(using_AWSDB){

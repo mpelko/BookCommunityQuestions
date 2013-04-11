@@ -1,4 +1,5 @@
-var DEBUG=true
+var DEBUG=false
+var using_AWSDB=true
 var all_QA = []
 var last_loc = 0;
 var username = ""
