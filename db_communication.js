@@ -39,6 +39,7 @@ function update_all_QA(book_id)
 
 function send_answer(answer, usr, questionID, book_id)
 {
+//alert(answer+' '+usr+' '+questionID+' '+book_id);
     if (DEBUG)
     {
         send_answer_DEBUG(answer, usr, questionID, book_id);
@@ -153,28 +154,6 @@ function get_the_html_questions(book_id) {
     return html;
 }
 
-function html_qa(Q) {
-    html = '<div id="bcq_q' + Q.questionID + '" qid="' + Q.questionID + '">';
-    html += '<h4>' + Q.title + ' <span style="color:grey;font-size:small;font-style:italic;"> - ' + Q.username + '</span>' + '</h4>';
-    html += html_answers(Q.answers);
-    html += '<form id="bcq_q' + Q.questionID + '_ansform" onsubmit="return false;"><textarea id="bcq_q' + Q.questionID + '_ta" style="width:100%;height:100px;"></textarea><input id="bcq_q' + Q.questionID + '_answbutton" qid="' + Q.questionID + '" type="submit" value="Add answer" /></form>';
-    html += '</div>';
-    return html;
-}
-
-function html_answers(answs) {
-    if(answs.length > 0) {
-        html = '<ul is_answs=true class="bcq_answers">';
-        for (var i = 0; i < answs.length; i++)  {
-            html += '<li>' + answs[i].text + '<span style="color:grey;font-size:small;font-style:italic;"> - ' + answs[i].username + '</span>' + '</li>';
-        };
-        html += '</ul>';
-    }
-    else {
-        html = '<i is_answs=true style="padding:5px;">This question is unanswered. Can you help?</i>';
-    }
-    return html;
-}
 
 
 function login_as(usr) {

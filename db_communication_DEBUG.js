@@ -16,32 +16,33 @@ function update_book_id_DEBUG(book_title)
     for (var id in BOOKS_ALL_DEBUG)
         if(BOOKS_ALL_DEBUG[id]==book_title)
         {
-            current_book_id = id
+            current_book_id = id;
             return
         }
-    new_id = Object.keys(BOOKS_ALL_DEBUG).length
-    BOOKS_ALL_DEBUG[new_id]=book_title
-    current_book_id = new_id
+    new_id = Object.keys(BOOKS_ALL_DEBUG).length;
+    BOOKS_ALL_DEBUG[new_id]=book_title;
+    current_book_id = new_id;
 }
 
 function QA_update_all_DEBUG(book_id)
 {
-    QAs = []
+    var QAs = [];
     for (var i = 0; i < QA_ALL_DEBUG.length; i++) 
     {
         Q = QA_ALL_DEBUG[i];
-        if(Q.bookID==book_id)
+        if(Q.bookID==book_id);
         {
             QAs.push(Q);
         };
     };
-    allQA = QAs
+    allQA = QAs;
+    handleUpdatedQA();
 }
 
 function send_question_DEBUG(question, usr, book_id, location)
 {
     Qid = QA_ALL_DEBUG[QA_ALL_DEBUG.length-1].questionID +1;
-    QA_ALL_DEBUG.push({questionID:Qid, bookID:book_id, "title":question, "username":usr, "location":location, "answers":[]})
+    QA_ALL_DEBUG.push({questionID:Qid, bookID:book_id, "title":question, "username":usr, "location":location, "answers":[]});
 }
     
 function send_answer_DEBUG(answer, usr, q_id, book_id)
