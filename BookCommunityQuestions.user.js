@@ -26,6 +26,25 @@ function get_read_loc() {
     return loc;
 }
 
+function goto_loc(location) {
+    var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
+    doc2.getElementById('kindleReader_goToMenuItem_goToLocation').click();
+    var gotobutton = findGoToButton();
+    doc2.getElementById('kindleReader_dialog_gotoField').value = location;
+    gotobutton.click();
+}
+
+function findGoToButton() {
+    var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
+    var buts = doc2.getElementsByTagName("button")
+    for (var i=0; i<buts.length; i++){
+        var x=buts[i].children;
+        if (x.length==1 && x[0].textContent=="Go to location"){
+            return buts[i];
+        }
+    }
+}
+
 function getBookName() {
     // <label id="kindleReader_title" style="color: rgb(153, 153, 153);">Les Misérables - Tome I - Fantine</label>
     var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
@@ -44,28 +63,33 @@ setTimeout(greasemonkey_main, 1800);
 
 function setup_everything() {
 //alert('setting up all');
+    current_book_id = get_book_id(getBookName());
     addPoseForm();
     setup_newels();
     setTimeout(setup_loopers, 500);
-    current_book_id = get_book_id(getBookName());
 }
 
 function setup_newels() {
 //alert('setting up new elements');
     addPoseButton();
-    make_panel();
+    makePanel();
     add_qmark_button();
 }
 
 function setup_loopers() {
 //alert('adding loopers');
     var loopersrunner = window.setInterval(run_loopers,100);
+    var loopersrunner2 = window.setInterval(run_long_loopers,5000);
 }
 
 function run_loopers() {
 //alert('running loopers');
     refreshPoseButton();
     refreshQandApanel();
+}
+
+function run_long_loopers() {
+    updatePanelQA();
 }
 
 function refreshPoseButton() {
@@ -111,7 +135,7 @@ function refreshMenuSep() {
 function refreshQandApanel() {
     var pres_loc = get_read_loc();
     if (last_loc!=pres_loc) {
-        update_panel();
+        updatePanelLoc();
     }
     last_loc = pres_loc;
 }
@@ -205,9 +229,10 @@ document.getElementById('bcq_posesubmitbutton').value = 'Question sent';
 document.getElementById('bcq_posesubmitbutton').disabled = true;
 
 setTimeout(hidePoseForm,500);
-setTimeout(update_panel,700);
+setTimeout(updatePanel,700);
 setTimeout(resetPoseForm,700)
 // Don't refresh the page
+    updatePanelQA();
 return false;
 }
 
@@ -259,13 +284,13 @@ function add_qmark_button() {
     qicon.addEventListener('mouseover', function() {
        this.src='https://s3-eu-west-1.amazonaws.com/amazonhack/qbuttonTrBl.png'
     } );
-    qicon.addEventListener('click', toggle_panel);
+    qicon.addEventListener('click', togglePanel);
     qbutton.appendChild(qicon);
     topmenu.appendChild(qbutton);
 }
 
 
-function make_panel() {
+function makePanel() {
 //alert('making panel');
 
     document.body.style.background = "#e8e8e0"; // "#f2f2e2";
@@ -278,15 +303,17 @@ function make_panel() {
     qcontent.style.position = "absolute";
     qcontent.style.float = "left";
     qcontent.style.width = "30%";
+    qcontent.style.height = "100%";
+    qcontent.style.overflow = "scroll";
     qcontent.style.top = "0";
     qcontent.style.right = "0";
-    qcontent.isout = "False";
-
+    qcontent.isout = false;
+    
     qcontent.innerHTML = '<div id="question_forum" style="margin:auto;padding:15px;"></div>';
 
     container.appendChild(qcontent);
     
-    remove_panel();
+    hidePanel();
     
     var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
     var rightTurner = doc2.getElementById('kindleReader_pageTurnAreaRight');
@@ -295,10 +322,32 @@ function make_panel() {
         rightTurner.style.left="";
         rightTurner.style.right="0";
     }
+    
+    resetPanel();
 }
 
 
-function remove_panel() {
+function resetPanel() {
+    qforum = document.getElementById('question_forum');
+    var html = get_the_html_questions(current_book_id);
+    qforum.innerHTML = '<h3>Q&A Forum</h3>' + html;
+    makePanelClicky();
+    updatePanelLoc();
+}
+
+
+function makePanelClicky() {
+    allQA = get_all_QA(current_book_id);
+    for (var j=0; j<allQA.length; j++) {
+        Q = allQA[j];
+        inputid = 'bcq_q' + Q.questionID + '_answbutton';
+        document.getElementById(inputid).qid = Q.questionID;
+        document.getElementById(inputid).addEventListener('click', sendAnswerForm);
+    }
+}
+
+
+function hidePanel() {
     // Get the question content panel.
     var content = document.getElementById("KindleReaderContainer");
     var qcontent = document.getElementById("question_content");
@@ -312,7 +361,7 @@ function remove_panel() {
 
 }
 
-function add_panel() {
+function showPanel() {
    // Get the question content panel.
    var content = document.getElementById("KindleReaderContainer");
    var qcontent = document.getElementById("question_content");
@@ -321,7 +370,7 @@ function add_panel() {
    // Give the panel dimensions
    qcontent.style.display = "block";
    // Sample text.
-    update_panel();
+    updatePanel();
 
    // Reduce size of content panel.
    var frame = document.getElementById("KindleReaderIFrame");
@@ -329,19 +378,23 @@ function add_panel() {
 }
 
 
-function toggle_panel() {
+function togglePanel() {
    var qcontent = document.getElementById("question_content");
-   if (qcontent.isout == "True") {
-       remove_panel();
-       qcontent.isout = "False";
+   if (qcontent.isout == true) {
+       hidePanel();
+       qcontent.isout = false;
    }
    else {
-       add_panel();
-       qcontent.isout = "True";
+       showPanel();
+       qcontent.isout = true;
    }
 }
 
-function update_panel() {
+
+function updatePanel() {
+
+return false;
+
     var loc = get_read_loc();
     var htmlq = get_the_html_question(current_book_id, loc);
     if (htmlq == "") {
@@ -361,19 +414,92 @@ function update_panel() {
 }
 
 
+function updatePanelQA() {
+    // Get the list of questions and their answers
+    // Find the div for each question
+    // If it doesn't exist, add it
+    // If it does exist, reset the answers within it
+    var qforum = document.getElementById("question_forum");
+    if (qforum==null) {return false};
+    
+    allQA = get_all_QA(current_book_id);
+    for (var j=0; j<allQA.length; j++) {
+        Q = allQA[j];
+        divid = 'bcq_q' + Q.questionID;
+        qdiv = document.getElementById(divid);
+        if (qdiv==null) {
+            //append question
+            qforum.innerHTML += html_qa(Q);
+        }
+        else {
+            //update answers
+            var x = qdiv.children;
+            for (i=0; i<x.length; i++) {
+                if (x[i].hasAttribute('is_answs')) {
+                    y = x[i];
+                    // Botched method
+                    if (y.children.length == Q.answers.length) {
+                        // do nothing
+                    }
+                    else {
+                        var div = document.createElement('div');
+                        div.innerHTML = html_answers(Q.answers);
+                        var newy = div.firstChild
+                        qdiv.replaceChild(newy,y);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+function updatePanelLoc() {
+    allQA = get_all_QA(current_book_id);
+    location = get_read_loc();
+    nshown = 0;
+    for (var j=0; j<allQA.length; j++) {
+        Q = allQA[j];
+        divid = 'bcq_q' + Q.questionID;
+        qdiv = document.getElementById(divid);
+        if (qdiv==null) {
+            updatePanelQA();
+            continue;
+        }
+        if (Q.location-2 < location && location < Q.location+25) {
+            qdiv.style.display = "block";
+            nshown++;
+        }
+        else {
+            qdiv.style.display = "none";
+        }
+    }
+    if (nshown>0) {
+        document.getElementById('bcq_q-1').style.display = "none";
+    }
+    else {
+        document.getElementById('bcq_q-1').style.display = "block";
+    }
+}
+
+
 function sendAnswerForm() {
-    var answer = document.getElementById("question_textarea").value;
+    var answer = this.previousSibling.value;
     var loc = get_read_loc();
-    var qa = get_the_right_QA(current_book_id, loc)
+    var qid = this.qid;
     
     // If not logged in, show login form and stop
     if (!check_login()) {return false};
     
     // If logged in, send the question and update HTML
-    send_answer(answer, getUsername(), qa.questionID, current_book_id);
-    document.getElementById("question_textarea").value = ""; 
-    update_panel();   
+    send_answer(answer, getUsername(), qid, current_book_id);
+    this.previousSibling.value = "";
+    updatePanel();
+    updatePanelQA();
+//alert(get_the_html_questions(current_book_id))
     return false;
 }
+
 
 

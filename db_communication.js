@@ -108,8 +108,7 @@ function get_the_html_question(book_id, location)
             html = html.concat("<ul>")
             for (var i = 0; i < Q.answers.length; i++) 
             {
-                A = Q.answers[i].text;
-                html = html.concat("<li>", A, "</li>")
+                html = html.concat("<li>", Q.answers[i].text, "</li>")
             };
             html = html.concat("</ul>")
         }
@@ -121,28 +120,35 @@ function get_the_html_question(book_id, location)
 }
 
 
-function get_the_html_questions(book_id)
-{
-    html = '';
-    for (var j=0; j<QA.length; j++) {
-        Q = QA[j];
-        html += '<div id="bcq_q' + Q.questionID + '" qid="' + Q.questionID + '">';
-        html += '<h4>' + Q.title + '</h4>';
-        if(Q.answers.length > 0)
-        {
-            html += '<ul class="bcq_answers">';
-            for (var i = 0; i < Q.answers.length; i++) 
-            {
-                A = Q.answers[i];
-                html += '<li>' + A + '</li>';
-            };
-            html += '</ul>';
-        }
-        else {
-            html += '<i style="padding:5px;">This question is unanswered. Can you help?</i>';
-        }
-        html += '<form id="bcq_q' + Q.questionID + '_ansform" onsubmit="return false;"><textarea id="question_textarea" style="width:100%;height:100px;"></textarea><input id="bcq_answbutton" type="submit" value="Add answer" /></form>';
-        html += '</div>';
+function get_the_html_questions(book_id) {
+    html = '<div id="bcq_q-1"><p style="font-style:italic;">No questions here.</p></div>';
+    allQA = get_all_QA(book_id);
+    for (var j=0; j<allQA.length; j++) {
+        Q = allQA[j];
+        html += html_qa(Q);
+    }
+    return html;
+}
+
+function html_qa(Q) {
+    html = '<div id="bcq_q' + Q.questionID + '" qid="' + Q.questionID + '">';
+    html += '<h4>' + Q.title + ' <span style="color:grey;font-size:small;font-style:italic;"> - ' + Q.username + '</span>' + '</h4>';
+    html += html_answers(Q.answers);
+    html += '<form id="bcq_q' + Q.questionID + '_ansform" onsubmit="return false;"><textarea id="bcq_q' + Q.questionID + '_ta" style="width:100%;height:100px;"></textarea><input id="bcq_q' + Q.questionID + '_answbutton" qid="' + Q.questionID + '" type="submit" value="Add answer" /></form>';
+    html += '</div>';
+    return html;
+}
+
+function html_answers(answs) {
+    if(answs.length > 0) {
+        html = '<ul is_answs=true class="bcq_answers">';
+        for (var i = 0; i < answs.length; i++)  {
+            html += '<li>' + answs[i].text + '<span style="color:grey;font-size:small;font-style:italic;"> - ' + answs[i].username + '</span>' + '</li>';
+        };
+        html += '</ul>';
+    }
+    else {
+        html = '<i is_answs=true style="padding:5px;">This question is unanswered. Can you help?</i>';
     }
     return html;
 }
