@@ -1,12 +1,12 @@
 
+base_url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com"
+
 function update_book_id_AWSDB(book_title)
 {
-    var url = "http://127.0.0.1:8080/get/bookID?title="+book_title
-    
-    var book_id = ""
+    var url = base_url + "/getbookid/?booktitle="+book_title
     
     function handle_JSON(data){
-        current_book_id=data["bid"]
+        current_book_id=data[0]["bookID"]
     }
     
     $.getJSON( url + "&callback=?", null,  handle_JSON);
