@@ -48,15 +48,15 @@ questionID:
 <br/>
 <br/>
 
-<form name="addBook" action="" method="POST">Enter book information to add it: asdfasdfasdfadsfasdfasdfadsfadfasdfasdfasdfasdfasdfasdfasdf <br/>
+<form name="addBook" action="/addbook/" method="GET">Enter book information to add it: <br/>
 book title: 
-<input type="text" name="bookTitle" value=""> <br/>
+<input type="text" name="title" value=""> <br/>
 <input type="submit" value="Add book">
 </form>
 <br/>
 <br/>
 
-<form name="addQuestion" action="" method="POST">Enter question information to add it: <br/>
+<form name="addQuestion" action="/addquestion/" method="GET">Enter question information to add it: <br/>
 question: 
 <input type="text" name="question" value=""> <br/>
 bookID: 
@@ -68,7 +68,7 @@ location:
 <br/>
 <br/>
 
-<form name="addAnswer" action="" method="POST">Enter answer information to add it: <br/>
+<form name="addAnswer" action="/addanswer/" method="GET">Enter answer information to add it: <br/>
 answer: 
 <input type="text" name="answer" value=""> <br/>
 questionID: 
@@ -83,7 +83,12 @@ questionID:
 
 """
 
-
+def generateID(conn, table):
+    count = 1
+    items = conn.scan(table)
+    for item in items:
+        count = count + 1
+    return count
 
 def index(environ, start_response):
     conn = boto.dynamodb.connect_to_region(
@@ -92,15 +97,8 @@ def index(environ, start_response):
         aws_secret_access_key='Qj1lHpPVfmyCwCq0bSwyVM0MNu7onlCv3Un/5fGC')
     status = '200 OK'
     headers = [('Content-type', 'text/html')]
-    btable = conn.get_table('Books')
-    qtable = conn.get_table('Questions')
-    atable = conn.get_table('Answers')
-    questionsForB1 = conn.scan(qtable, scan_filter={'bookID': condition.EQ(1)})
-    aux = response
     start_response(status, headers)
-    for item in questionsForB1:
-        aux = aux + str(item) + '\n'
-    return [aux]
+    return [response]
     
 def addBook(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
@@ -113,45 +111,70 @@ def addBook(environ, start_response):
         status = '200 OK'
         headers = [('Content-type', 'text/html')]
         btable = conn.get_table('Books')
-        btable.new_item(attrs={"title":str(bookTitle)} )
+        if 'bookID' in parameters:
+            bookID = escape(parameters['bookID'][0])
+        else:
+            bookID = 'b' + str(generateID(conn, btable))
+        item = btable.new_item(attrs={"bookID": bookID, "title":bookTitle} )
+        conn.put_item(item)
         start_response(status, headers)
-        return [response]
+        return [response + "Done"]
     else:
         return not_found(environ, start_response)
     
 def addQuestion(environ, start_response):
-    conn = boto.dynamodb.connect_to_region(
-        'us-west-2',
-        aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-        aws_secret_access_key='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')
-    status = '200 OK'
-    headers = [('Content-type', 'text/html')]
-    btable = conn.get_table('Books')
-    qtable = conn.get_table('Questions')
-    atable = conn.get_table('Answers')
-    questionsForB1 = conn.scan(qtable, scan_filter={'bookID': condition.EQ(1)})
-    aux = response
-    start_response(status, headers)
-    for item in questionsForB1:
-        aux = aux + str(item) + '\n'
-    return [aux]
+    parameters = parse_qs(environ.get('QUERY_STRING', ''))
+    if ('bookID' in parameters) and ('location' in parameters) and ('question' in parameters):
+        bookID = escape(parameters['bookID'][0])
+        location = escape(parameters['location'][0])
+        question = escape(parameters['question'][0])
+        conn = boto.dynamodb.connect_to_region(
+            'us-west-2',
+            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
+            aws_secret_access_key='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')
+        status = '200 OK'
+        headers = [('Content-type', 'text/html')]
+        qtable = conn.get_table('Questions')
+        if 'questionID' in parameters:
+            questionID = escape(parameters['questionID'][0])
+        else:
+            questionID = 'q' + str(generateID(conn, qtable))
+        item = qtable.new_item(
+            attrs={"questionID": questionID, 
+                "question": question,
+                "bookID": bookID,
+                "location": int(location)} )
+        conn.put_item(item)
+        start_response(status, headers)
+        return [response + "Done"]
+    else:
+        return not_found(environ, start_response)
     
 def addAnswer(environ, start_response):
-    conn = boto.dynamodb.connect_to_region(
-        'us-west-2',
-        aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-        aws_secret_access_key='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')
-    status = '200 OK'
-    headers = [('Content-type', 'text/html')]
-    btable = conn.get_table('Books')
-    qtable = conn.get_table('Questions')
-    atable = conn.get_table('Answers')
-    questionsForB1 = conn.scan(qtable, scan_filter={'bookID': condition.EQ(1)})
-    aux = response
-    start_response(status, headers)
-    for item in questionsForB1:
-        aux = aux + str(item) + '\n'
-    return [aux]
+    parameters = parse_qs(environ.get('QUERY_STRING', ''))
+    if ('questionID' in parameters) and ('answer' in parameters):
+        questionID = escape(parameters['questionID'][0])
+        answer = escape(parameters['answer'][0])
+        conn = boto.dynamodb.connect_to_region(
+            'us-west-2',
+            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
+            aws_secret_access_key='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')
+        status = '200 OK'
+        headers = [('Content-type', 'text/html')]
+        atable = conn.get_table('Answers')
+        if 'answerID' in parameters:
+            answerID = escape(parameters['answerID'][0])
+        else:
+            answerID = 'a' + str(generateID(conn, atable))
+        item = atable.new_item(
+            attrs={"answerID": answerID,
+                "answer": answer,
+                "questionID": questionID} )
+        conn.put_item(item)
+        start_response(status, headers)
+        return [response + "Done"]
+    else:
+        return not_found(environ, start_response)
 
 def getBookID(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
@@ -163,19 +186,28 @@ def getBookID(environ, start_response):
             aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('content-type','application/javascript'), ('charset','UTF-8')]
-        qtable = conn.get_table('Books')
+        btable = conn.get_table('Books')
         jsonlist = []
-        books = conn.scan(qtable, scan_filter={'title': condition.EQ(bookTitle)})
-        start_response(status, headers)
+        books = conn.scan(btable, scan_filter={'title': condition.EQ(bookTitle)})
+        existsBook = False
         for book in books:
             jsondict = {"bookID":book["bookID"], "title":book["title"]}
             jsonlist.append(jsondict)
+            existsBook = True
+        if not existsBook:
+            bookID = 'b' + str(generateID(conn, btable))
+            item = btable.new_item(attrs={"bookID": bookID, "title":bookTitle} )
+            conn.put_item(item)
+            jsonlist.append({"bookID":bookID, "title":bookTitle})
         response = json.dumps(jsonlist)
         if 'callback' in parameters:
+            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+            start_response(status, headers)
             callback_function = escape(parameters['callback'][0])
             return jsonp(callback_function, response)
         else:
+            headers = [('content-type','application/json'), ('charset','UTF-8')]
+            start_response(status, headers)
             return [response]
     else:
         return not_found(environ, start_response)
@@ -190,19 +222,21 @@ def getQuestions(environ, start_response):
             aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('content-type','application/javascript'), ('charset','UTF-8')]
         qtable = conn.get_table('Questions')
         jsonlist = []
-        questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(int(bookID))})
-        start_response(status, headers)
+        questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
         for question in questions:
             jsondict = {"questionID":question["questionID"], "question":question["question"], "location":int(question["location"])}
             jsonlist.append(jsondict)
         response = json.dumps(jsonlist)
         if 'callback' in parameters:
+            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+            start_response(status, headers)
             callback_function = escape(parameters['callback'][0])
             return jsonp(callback_function, response)
         else:
+            headers = [('content-type','application/json'), ('charset','UTF-8')]
+            start_response(status, headers)
             return [response]
     else:
         return not_found(environ, start_response)
@@ -217,19 +251,21 @@ def getAnswers(environ, start_response):
             aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('content-type','application/javascript'), ('charset','UTF-8')]
         qtable = conn.get_table('Answers')
         jsonlist = []
         answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
-        start_response(status, headers)
         for answer in answers:
             jsondict = {"answerID":answer["answerID"], "answer":answer["answer"]}
             jsonlist.append(jsondict)
         response = json.dumps(jsonlist)
         if 'callback' in parameters:
+            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+            start_response(status, headers)
             callback_function = escape(parameters['callback'][0])
             return jsonp(callback_function, response)
         else:
+            headers = [('content-type','application/json'), ('charset','UTF-8')]
+            start_response(status, headers)
             return [response]
     else:
         return not_found(environ, start_response)
