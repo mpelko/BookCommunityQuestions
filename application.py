@@ -233,7 +233,7 @@ def getQuestions(environ, start_response):
         questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
         for question in questions:
             jsondict = {"questionID":question["questionID"], 
-                "question":question["question"], 
+                "title":question["question"], 
                 "location":int(question["location"]), 
                 "username":question["username"],
                 "answers":getAnswersforQ(conn, question["questionID"])}
@@ -256,7 +256,7 @@ def getAnswersforQ(conn, questionID):
     jsonlist = []
     answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
     for answer in answers:
-        jsondict = {"answerID":answer["answerID"], "answer":answer["answer"], "username":answer["username"]}
+        jsondict = {"answerID":answer["answerID"], "text":answer["answer"], "username":answer["username"]}
         jsonlist.append(jsondict)
     return jsonlist
     
