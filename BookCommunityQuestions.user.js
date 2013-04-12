@@ -23,7 +23,7 @@
 //alert('begin');
 
 addStyles();
-setTimeout(greasemonkey_main, 3800);
+setTimeout(greasemonkey_main, 2000);
 
 
 function greasemonkey_main() {

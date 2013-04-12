@@ -12,6 +12,7 @@ function get_read_loc() {
 
 function goto_loc(location) {
     var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
+    doc2.getElementById('kindleReader_button_goto').click();
     doc2.getElementById('kindleReader_goToMenuItem_goToLocation').click();
     var gotobutton = findGoToButton();
     doc2.getElementById('kindleReader_dialog_gotoField').value = location;
@@ -31,9 +32,12 @@ function findGoToButton() {
 
 function getBookName() {
     // <label id="kindleReader_title" style="color: rgb(153, 153, 153);">Les Misérables - Tome I - Fantine</label>
-    var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
-    var book = doc2.getElementById("kindleReader_title").innerHTML;
-    return book;
+    var frame=document.getElementById("KindleReaderIFrame");
+    if (frame==null) {return null;}
+    var doc2 = frame.contentDocument;
+    var bookel = doc2.getElementById("kindleReader_title");
+    if (bookel==null) {return null;}
+    return bookel.textContent;
 }
 
 
@@ -46,12 +50,13 @@ function hasBookChanged() {
         allQA = [];
         return false;
     }
-    if (getBookName()=="") {
+    new_book_name = getBookName();
+    if (new_book_name==null || new_book_name=="") {
         // Have landed straight onto Library page
         // do nothing, as there is nothing to do...?
         return false;
     }
-    else if (getBookName()!==current_book_name){
+    else if (new_book_name!==current_book_name){
         // Have gone to book from Library or other book
         // Need to setup again
         return true;

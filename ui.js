@@ -15,12 +15,7 @@ function refreshPoseButton() {
 }
 
 function refreshMenuSep() {
-    doc2=document.getElementById("KindleReaderIFrame").contentDocument;
-    if (doc2 == null) {
-//        alert('No doc2');
-        return false;
-    }
-    var popupmenu = doc2.getElementById('kindle_menu_border');
+    popupmenu = get_popupmenu();
     if (popupmenu == null) {
 //        alert('No kindle_menu_border');
         return false;
@@ -58,24 +53,7 @@ function refreshQMark() {
 // which appears when highlighting text
 function addPoseButton() {
 //alert('adding pose button');
-    var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
-    if (doc2 == null) {
-//        alert('No doc2');
-        return false;
-    }
-    var popupparent = doc2.getElementById('kindleReader_menu_contextMenu');
-    if (popupparent == null) {
-//        alert('No kindleReader_menu_contextMenu');
-        return false;
-    }
-    var x = popupparent.childNodes;
-    popupmenu = null;
-    for (i=0;i<x.length;i++) {
-        if (x[i].id == 'kindle_menu_border') {
-            popupmenu = x[i];
-            break;
-        }
-    }
+    popupmenu = get_popupmenu();
     if (popupmenu == null) {
 //        alert('No kindle_menu_border');
         return false;
@@ -94,6 +72,27 @@ function addPoseButton() {
     popupmenu.appendChild(newbutton);
 }
 
+function get_popupmenu() {
+    var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
+    if (doc2 == null) {
+//        alert('No doc2');
+        return null;
+    }
+    var popupparent = doc2.getElementById('kindleReader_menu_contextMenu');
+    if (popupparent == null) {
+//        alert('No kindleReader_menu_contextMenu');
+        return null;
+    }
+    var x = popupparent.childNodes;
+    popupmenu = null;
+    for (i=0;i<x.length;i++) {
+        if (x[i].id == 'kindle_menu_border') {
+            popupmenu = x[i];
+            break;
+        }
+    }
+    return popupmenu;
+}
 
 // Adds Background mask AND Pose Question form
 function addPoseForm() {
@@ -338,16 +337,32 @@ function make_qnode(Q) {
     var d = document.createElement('div');
     d.id = 'bcq_q' + Q.questionID;
     d.qid= Q.questionID;
+    d.className = 'bcq_q';
     var h = document.createElement('h4');
     h.innerHTML = Q.title + ' <span class="bcq_usrname"> - ' + Q.username + '</span>';
     h.addEventListener('click', toggle_q_expansion);
+    h.className = 'bcq_hexpanded';
+    h.style.cursor = 'pointer';
     d.appendChild(h);
     
     var d2 = document.createElement('div');
     d2.id = 'bcq_q' + Q.questionID + '_inner';
     d2.className = 'bcq_qexpanded';
-    d2.style.cursor = 'pointer';
     d2.innerHTML += html_answers(Q.answers);
+    
+//    var gt = document.createElement('input');
+//    gt.type = 'button';
+//    gt.value = 'Go to question location (' + Q.location + ')';
+//    gt.loc = Q.location;
+//    gt.addEventListener('click', goto_qloc);
+//    d2.appendChild(gt);
+    var gt = document.createElement('span');
+    gt.className = 'bcq_goto';
+    gt.textContent = 'Go to question location (' + Q.location + ')';
+    gt.loc = Q.location;
+    gt.style.cursor = 'pointer';
+    gt.addEventListener('click', goto_qloc);
+    d2.appendChild(gt);
     
     var f = document.createElement('form');
     f.id='bcq_q' + Q.questionID + '_ansform';
@@ -375,10 +390,16 @@ function toggle_q_expansion() {
     var d2 = this.nextSibling;
     if (d2.className=='bcq_qexpanded') {
         d2.className = 'bcq_qcontracted';
+        this.className = 'bcq_hcontracted';
     }
     else if (d2.className=='bcq_qcontracted') {
         d2.className = 'bcq_qexpanded';
+        this.className = 'bcq_hexpanded';
     }
+}
+
+function goto_qloc() {
+    goto_loc(this.loc);
 }
 
 function html_answers(answs) {
