@@ -56,7 +56,7 @@ book title:
 <br/>
 <br/>
 
-<form name="addQuestion" action="/addquestion/" method="GET">Enter question information to add it: <br/>
+<form name="addQuestion" action="/addquestion/" method="GET">Enter question information to add it: MINOR CHANGE FOR TESTING <br/>
 question: 
 <input type="text" name="question" value=""> <br/>
 bookID: 
