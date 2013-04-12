@@ -15,4 +15,5 @@ function addStyles() {
 
 // Usernames
 addGlobalStyle('.bcq_usrname {color:grey;font-size:small;font-style:italic;}');
+addGlobalStyle('.bcq_qcontracted {display:none;}');
 }

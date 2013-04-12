@@ -100,7 +100,7 @@ function addPoseForm() {
 //alert('adding pose form');
 //doc2=document.getElementById("KindleReaderIFrame").contentDocument;
 var bgmask_container = document.createElement("div");
-bgmask_container.innerHTML = '<div id="bcq_posemask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(50,50,50,0.7);z-index:10000;display:none;"><div id="bcq_poseform" style="border-radius: 25px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(40, 40, 40); padding: 30px; position: absolute;"><form onsubmit="return false;"><p>Submit your question about this book: <i>' + getBookName() + '</i></p><p>Question:</p><textarea id="bcq_qsubmitinput" name="question-title" style="width:90%;height:100px;display:block;margin:auto;"></textarea><br/><div style="margin:auto;text-align:center;"><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button id="bcq_posecancelbutton" type="button">Cancel</button></div><form></div></div>';
+bgmask_container.innerHTML = '<div id="bcq_posemask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(50,50,50,0.7);z-index:10000;display:none;"><div id="bcq_poseform" style="border-radius: 25px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(40, 40, 40); padding: 30px; position: absolute;"><form onsubmit="return false;"><p>Submit your question about this book: <i id="bcq_posebookname">' + getBookName() + '</i></p><p>Question:</p><textarea id="bcq_qsubmitinput" name="question-title" style="width:90%;height:100px;display:block;margin:auto;"></textarea><br/><div style="margin:auto;text-align:center;"><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button id="bcq_posecancelbutton" type="button">Cancel</button></div><form></div></div>';
 document.body.appendChild(bgmask_container);
 
 document.getElementById('bcq_posesubmitbutton').addEventListener('click', submitPoseForm);
@@ -314,7 +314,7 @@ function updatePanelQA() {
                         div.innerHTML = html_answers(Q.answers);
                         var newy = div.firstChild
                         qdiv.replaceChild(newy,y);
-                        div.parentNode.removeChild(div);
+//                        div.parentNode.removeChild(div);
                     }
                     break;
                 }
@@ -340,9 +340,14 @@ function make_qnode(Q) {
     d.qid= Q.questionID;
     var h = document.createElement('h4');
     h.innerHTML = Q.title + ' <span class="bcq_usrname"> - ' + Q.username + '</span>';
+    h.addEventListener('click', toggle_q_expansion);
     d.appendChild(h);
     
-    d.innerHTML += html_answers(Q.answers);
+    var d2 = document.createElement('div');
+    d2.id = 'bcq_q' + Q.questionID + '_inner';
+    d2.className = 'bcq_qexpanded';
+    d2.style.cursor = 'pointer';
+    d2.innerHTML += html_answers(Q.answers);
     
     var f = document.createElement('form');
     f.id='bcq_q' + Q.questionID + '_ansform';
@@ -356,20 +361,31 @@ function make_qnode(Q) {
     i.id='bcq_q' + Q.questionID + '_answbutton';
     i.qid=Q.questionID;
     i.type="submit";
-    i.value="Add answer"
+    i.value="Add answer";
     i.addEventListener('click', sendAnswerForm);
     f.appendChild(t);
     f.appendChild(i);
 
-    d.appendChild(f);
+    d2.appendChild(f);
+    d.appendChild(d2);
     return d;
+}
+
+function toggle_q_expansion() {
+    var d2 = this.nextSibling;
+    if (d2.className=='bcq_qexpanded') {
+        d2.className = 'bcq_qcontracted';
+    }
+    else if (d2.className=='bcq_qcontracted') {
+        d2.className = 'bcq_qexpanded';
+    }
 }
 
 function html_answers(answs) {
     if(answs.length > 0) {
         html = '<ul is_answs=true class="bcq_answers">';
         for (var i = 0; i < answs.length; i++)  {
-            html += '<li>' + answs[i].text + '<span style="color:grey;font-size:small;font-style:italic;"> - ' + answs[i].username + '</span>' + '</li>';
+            html += '<li>' + answs[i].text + '<span class="bcq_usrname"> - ' + answs[i].username + '</span>' + '</li>';
         };
         html += '</ul>';
     }
@@ -380,6 +396,7 @@ function html_answers(answs) {
 }
 
 function updatePanelLoc() {
+return;
     var QAs = allQA
     location = get_read_loc();
     nshown = 0;

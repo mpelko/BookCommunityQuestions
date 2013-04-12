@@ -1,5 +1,5 @@
-var base_url = "http://127.0.0.1:8080"
-//var base_url = "http://nuclearScotland.bajta.org"
+//var base_url = "http://127.0.0.1:8080"
+var base_url = "http://nuclearScotland.bajta.org"
 
 function update_book_id_test_server(book_title)
 {

@@ -61,25 +61,13 @@ function run_loopers() {
         current_book_name = getBookName();
         makePanel();
         update_book_id(getBookName()); // will update QA when finished as well
+        document.getElementById('bcq_posebookname').textContent = getBookName();
         add_qmark_button();
     }
     if (current_book_id!=="") {
         refreshPoseButton();
         refreshQAloc();
     }
-}
-
-// defunct
-function handleBookChange() {
-    if (document.getElementById("KindleReaderIFrame")==null) {
-        // Not loaded yet! Try again in a little while
-        window.setInterval(handleBookChange,100);
-    }
-alert('Book has changed')
-    current_book_name = getBookName();
-    document.getElementById('bcq_q-2').style.display = "block"; // Show loading
-    update_book_id(getBookName()); // will update QA when finished as well
-    add_qmark_button();
 }
 
 function run_long_loopers() {
