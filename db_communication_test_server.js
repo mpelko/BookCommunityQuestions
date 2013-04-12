@@ -1,5 +1,5 @@
-//var base_url = "http://127.0.0.1:8080"
-var base_url = "http://nuclearScotland.bajta.org"
+var base_url = "http://127.0.0.1:8080"
+//var base_url = "http://nuclearScotland.bajta.org"
 
 function update_book_id_test_server(book_title)
 {
@@ -39,10 +39,10 @@ function send_question_test_server(question, usr, book_id, location)
     
     function handle_JSON(data){
         // could be used to implement what to do with the server response, if needed
-        return;
+        update_all_QA(current_book_id);
     }
         
-    $.getJSON( url + "?callback=?", data);
+    $.getJSON( url + "?callback=?", data, handle_JSON);
 
 }
     
@@ -54,8 +54,8 @@ function send_answer_test_server(answer, usr, q_id, book_id)
     
     function handle_JSON(data){
         // could be used to implement what to do with the server response, if needed
-        return;
+        update_all_QA(current_book_id);
     }
         
-    $.getJSON( url + "?callback=?", data);
+    $.getJSON( url + "?callback=?", data, handle_JSON);
 }

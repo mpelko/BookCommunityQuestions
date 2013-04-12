@@ -285,7 +285,6 @@ function updatePanelQA() {
     var qforum = document.getElementById("question_forum");
     if (qforum==null) {return false};
     
-    update_all_QA(current_book_id);
     var QAs = allQA
     for (var j=0; j<QAs.length; j++) {
         Q = QAs[j];

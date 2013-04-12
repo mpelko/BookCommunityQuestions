@@ -1,4 +1,4 @@
-base_url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com"
+//base_url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com"
 
 function update_book_id_AWSDB(book_title)
 {
