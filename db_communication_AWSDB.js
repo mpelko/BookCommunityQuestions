@@ -12,28 +12,6 @@ function update_book_id_AWSDB(book_title)
     $.getJSON( url + "&callback=?", null,  handle_JSON);
 }
 
-//function fix_questions_tags(data){
-//    if(data==[]){
-//        return []
-//    }
-//    result = []
-//    for (var i = 0; i < data.length; i++) {
-//        q = data[i]
-//        q["title"]=q["question"]
-//        delete q.question
-//        answs=[]
-//        for (var j = 0; j < q["answers"].length; j++) {
-//            a = q["answers"][j]
-//            a["text"]=a["answer"]
-//           delete a.answer
-//            answs.push(a)
-//        }
-//        q["answers"] = answs
-//        result.push(q)
-//    }
-//    return result
-//}
-
 function QA_update_all_AWSDB(book_id)
 {
     if(book_id == ""){
