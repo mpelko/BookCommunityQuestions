@@ -308,6 +308,27 @@ def jsonp(callback, dictionary):
         return "%s(%s)" % (callback, dictionary)
     return dictionary
     
+def deleteBook(environ, start_response):
+    parameters = parse_qs(environ.get('QUERY_STRING', ''))
+    if ('bookID' in parameters):
+        bookID = escape(parameters['bookID'][0])
+        conn = boto.dynamodb.connect_to_region(
+            'us-west-2',
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
+        status = '200 OK'
+        headers = [('Content-type', 'application/json')]
+        start_response(status, headers)
+        btable = conn.get_table('Books')
+        try:
+            item = conn.get_item( table=btable, hash_key=bookID)
+            conn.delete_item(item)
+            return json.dumps({"daffodil":0})
+        except:
+            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to put answer %s in DynamoDB" % answerID})
+    else:
+        return not_found(environ, start_response)
+    
 urls = [
     (r'^$', index),
     (r'addbook/?$', addBook),
