@@ -325,7 +325,7 @@ def deleteBook(environ, start_response):
             #overwriting with the last added
             item = conn.get_item( table=btable, hash_key=lastAddedID)
             item.add_attibute("bookID", bookID)
-            item.save()
+            btable.put_item(item)
             item = conn.get_item( table=btable, hash_key=lastAddedID)
             conn.delete_item(item)
             return json.dumps({"daffodil":0})
