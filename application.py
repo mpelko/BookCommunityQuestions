@@ -325,7 +325,7 @@ def deleteBook(environ, start_response):
             conn.delete_item(item)
             return json.dumps({"daffodil":0})
         except:
-            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to put answer %s in DynamoDB" % answerID})
+            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete book %s in DynamoDB" % bookID})
     else:
         return not_found(environ, start_response)
     
@@ -337,6 +337,7 @@ urls = [
     (r'getbookid/?$', getBookID),
     (r'getquestions/?$', getQuestions),
     (r'getanswers/?$', getAnswers),
+    (r'deletebool/?$', deleteBook),
 ]
 def application(environ, start_response):
     """
