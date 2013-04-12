@@ -12,5 +12,7 @@ function addGlobalStyle(css) {
 
 function addStyles() {
 // add custom styles
+
+// Usernames
 addGlobalStyle('.bcq_usrname {color:grey;font-size:small;font-style:italic;}');
 }

@@ -39,13 +39,14 @@ function send_question_test_server(question, usr, book_id, location)
     
     function handle_JSON(data){
         // could be used to implement what to do with the server response, if needed
+        update_all_QA(book_id);
         return;
     }
         
     $.getJSON( url + "?callback=?", data);
 
 }
-    
+
 function send_answer_test_server(answer, usr, q_id, book_id)
 {
 //alert('answer to test server: '+answer+' '+usr+' '+q_id+' '+book_id);
@@ -54,6 +55,7 @@ function send_answer_test_server(answer, usr, q_id, book_id)
     
     function handle_JSON(data){
         // could be used to implement what to do with the server response, if needed
+        update_all_QA(book_id);
         return;
     }
         

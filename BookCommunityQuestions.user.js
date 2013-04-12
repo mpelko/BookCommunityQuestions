@@ -20,6 +20,8 @@
 //   .tld is magic that matches all top-level domains (e.g. .com, .co.uk, .us, etc.)
 
 
+//alert('begin');
+
 addStyles();
 setTimeout(greasemonkey_main, 3800);
 
@@ -33,17 +35,17 @@ function greasemonkey_main() {
 
 function setup_everything() {
 //alert('setting up all');
-    update_book_id(getBookName());
     setup_newels();
+    run_loopers();
     setTimeout(setup_loopers, 500);
 }
 
 function setup_newels() {
 //alert('setting up new elements');
     addPoseForm();
-    addPoseButton();
-    makePanel();
-    add_qmark_button();
+//    makePanel();
+//    addPoseButton();
+//    add_qmark_button();
 }
 
 function setup_loopers() {
@@ -54,15 +56,39 @@ function setup_loopers() {
 
 function run_loopers() {
 //alert('running loopers');
-    refreshPoseButton();
-    refreshQandApanel();
+    if (hasBookChanged()) {
+//alert('Book has changed')
+        current_book_name = getBookName();
+        makePanel();
+        update_book_id(getBookName()); // will update QA when finished as well
+        add_qmark_button();
+    }
+    if (current_book_id!=="") {
+        refreshPoseButton();
+        refreshQAloc();
+    }
+}
+
+// defunct
+function handleBookChange() {
+    if (document.getElementById("KindleReaderIFrame")==null) {
+        // Not loaded yet! Try again in a little while
+        window.setInterval(handleBookChange,100);
+    }
+alert('Book has changed')
+    current_book_name = getBookName();
+    document.getElementById('bcq_q-2').style.display = "block"; // Show loading
+    update_book_id(getBookName()); // will update QA when finished as well
+    add_qmark_button();
 }
 
 function run_long_loopers() {
     //console.log(allQA)
     //console.log(current_book_id)
     //updatePanelQA();
-    update_all_QA(current_book_id);
+    if (current_book_id!=="") {
+        update_all_QA(current_book_id);
+    }
 }
 
 

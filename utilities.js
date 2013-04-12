@@ -36,7 +36,27 @@ function getBookName() {
     return book;
 }
 
-function handleUpdatedQA() {
-    updatePanelQA();
-    updatePanelLoc();
+
+function hasBookChanged() {
+    var frame = document.getElementById("KindleReaderIFrame");
+    if (frame==null) {
+        // Have returned to Library page from Book page
+        // reset book name, and wait
+        current_book_id = "";
+        allQA = [];
+        return false;
+    }
+    if (getBookName()=="") {
+        // Have landed straight onto Library page
+        // do nothing, as there is nothing to do...?
+        return false;
+    }
+    else if (getBookName()!==current_book_name){
+        // Have gone to book from Library or other book
+        // Need to setup again
+        return true;
+    }
+    else {
+        return false;
+    }
 }

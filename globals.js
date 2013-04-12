@@ -5,3 +5,4 @@ var allQA = [];
 var last_loc = 0;
 var username = '';
 var current_book_id = '';
+var current_book_name = '';
