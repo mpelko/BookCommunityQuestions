@@ -113,16 +113,19 @@ def addBook(environ, start_response):
             aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('Content-type', 'text/html')]
+        headers = [('Content-type', 'application/json')]
+        start_response(status, headers)
         btable = conn.get_table('Books')
         if 'bookID' in parameters:
             bookID = escape(parameters['bookID'][0])
         else:
             bookID = 'b' + str(generateID(conn, btable))
-        item = btable.new_item(attrs={"bookID": bookID, "title":bookTitle} )
-        conn.put_item(item)
-        start_response(status, headers)
-        return [response + "Done"]
+        try:
+            item = btable.new_item(attrs={"bookID": bookID, "title":bookTitle} )
+            conn.put_item(item)
+            return json.dumps({"daffodil":0})
+        except:
+            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to put book in DynamoDB"})
     else:
         return not_found(environ, start_response)
     
