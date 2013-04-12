@@ -155,20 +155,3 @@ function get_the_html_questions(book_id) {
 }
 
 
-
-function login_as(usr) {
-    username = usr;
-}
-
-function isLoggedIn() {
-    if (getUsername()=="") {
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
-function getUsername() {
-    return username;
-}

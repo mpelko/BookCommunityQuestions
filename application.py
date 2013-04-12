@@ -3,6 +3,7 @@ from cgi import parse_qs, escape
 import boto.dynamodb
 import condition
 import re
+import json
 
 response = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -63,6 +64,8 @@ bookID:
 <input type="text" name="bookID" value=""> <br/>
 location: 
 <input type="text" name="location" value=""> <br/>
+username:
+<input type="text" name="username" value=""> <br/>
 <input type="submit" value="Add question">
 </form>
 <br/>
@@ -73,6 +76,7 @@ answer:
 <input type="text" name="answer" value=""> <br/>
 questionID: 
 <input type="text" name="questionID" value=""> <br/>
+<input type="text" name="username" value=""> <br/>
 <input type="submit" value="Add answer">
 </form>
 <br/>
@@ -93,8 +97,8 @@ def generateID(conn, table):
 def index(environ, start_response):
     conn = boto.dynamodb.connect_to_region(
         'us-west-2',
-        aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-        aws_secret_access_key='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')
+        aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+        aws_secret_access_key='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')
     status = '200 OK'
     headers = [('Content-type', 'text/html')]
     start_response(status, headers)
@@ -106,8 +110,8 @@ def addBook(environ, start_response):
         bookTitle = escape(parameters['title'][0])
         conn = boto.dynamodb.connect_to_region(
             'us-west-2',
-            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-            aws_secret_access_key='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')
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
         status = '200 OK'
         headers = [('Content-type', 'text/html')]
         btable = conn.get_table('Books')
@@ -124,14 +128,15 @@ def addBook(environ, start_response):
     
 def addQuestion(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
-    if ('bookID' in parameters) and ('location' in parameters) and ('question' in parameters):
+    if ('bookID' in parameters) and ('location' in parameters) and ('question' in parameters) and ('username' in parameters):
         bookID = escape(parameters['bookID'][0])
         location = escape(parameters['location'][0])
         question = escape(parameters['question'][0])
+        username = escape(parameters['username'][0])
         conn = boto.dynamodb.connect_to_region(
             'us-west-2',
-            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-            aws_secret_access_key='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')
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
         status = '200 OK'
         headers = [('Content-type', 'text/html')]
         qtable = conn.get_table('Questions')
@@ -143,7 +148,8 @@ def addQuestion(environ, start_response):
             attrs={"questionID": questionID, 
                 "question": question,
                 "bookID": bookID,
-                "location": int(location)} )
+                "location": int(location),
+                "username": username} )
         conn.put_item(item)
         start_response(status, headers)
         return [response + "Done"]
@@ -152,13 +158,14 @@ def addQuestion(environ, start_response):
     
 def addAnswer(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
-    if ('questionID' in parameters) and ('answer' in parameters):
+    if ('questionID' in parameters) and ('answer' in parameters) and ('username' in parameters):
         questionID = escape(parameters['questionID'][0])
         answer = escape(parameters['answer'][0])
+        username = escape(parameters['username'][0])
         conn = boto.dynamodb.connect_to_region(
             'us-west-2',
-            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-            aws_secret_access_key='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')
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
         status = '200 OK'
         headers = [('Content-type', 'text/html')]
         atable = conn.get_table('Answers')
@@ -169,7 +176,8 @@ def addAnswer(environ, start_response):
         item = atable.new_item(
             attrs={"answerID": answerID,
                 "answer": answer,
-                "questionID": questionID} )
+                "questionID": questionID,
+                "username": username} )
         conn.put_item(item)
         start_response(status, headers)
         return [response + "Done"]
@@ -179,12 +187,11 @@ def addAnswer(environ, start_response):
 def getBookID(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
     if 'booktitle' in parameters:
-        import json
         bookTitle = escape(parameters['booktitle'][0])
         conn = boto.dynamodb.connect_to_region(
             'us-west-2',
-            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-            aws_secret_access_key='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')
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
         status = '200 OK'
         btable = conn.get_table('Books')
         jsonlist = []
@@ -215,18 +222,21 @@ def getBookID(environ, start_response):
 def getQuestions(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
     if 'bookID' in parameters:
-        import json
         bookID = escape(parameters['bookID'][0])
         conn = boto.dynamodb.connect_to_region(
             'us-west-2',
-            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-            aws_secret_access_key='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')
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
         status = '200 OK'
         qtable = conn.get_table('Questions')
         jsonlist = []
         questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
         for question in questions:
-            jsondict = {"questionID":question["questionID"], "question":question["question"], "location":int(question["location"])}
+            jsondict = {"questionID":question["questionID"], 
+                "question":question["question"], 
+                "location":int(question["location"]), 
+                "username":question["username"],
+                "answers":getAnswersforQ(conn, question["questionID"])}
             jsonlist.append(jsondict)
         response = json.dumps(jsonlist)
         if 'callback' in parameters:
@@ -240,22 +250,30 @@ def getQuestions(environ, start_response):
             return [response]
     else:
         return not_found(environ, start_response)
+
+def getAnswersforQ(conn, questionID):
+    qtable = conn.get_table('Answers')
+    jsonlist = []
+    answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
+    for answer in answers:
+        jsondict = {"answerID":answer["answerID"], "answer":answer["answer"], "username":answer["username"]}
+        jsonlist.append(jsondict)
+    return jsonlist
     
 def getAnswers(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
     if 'questionID' in parameters:
-        import json
         questionID = escape(parameters['questionID'][0])
         conn = boto.dynamodb.connect_to_region(
             'us-west-2',
-            aws_access_key_id='AKIAIOTGS64MNYNSZ2WQ',
-            aws_secret_access_key='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')
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
         status = '200 OK'
         qtable = conn.get_table('Answers')
         jsonlist = []
         answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
         for answer in answers:
-            jsondict = {"answerID":answer["answerID"], "answer":answer["answer"]}
+            jsondict = {"answerID":answer["answerID"], "answer":answer["answer"], "username":answer["username"]}
             jsonlist.append(jsondict)
         response = json.dumps(jsonlist)
         if 'callback' in parameters:

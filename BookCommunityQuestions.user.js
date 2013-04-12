@@ -23,7 +23,7 @@
 //alert('begin');
 
 addStyles();
-setTimeout(greasemonkey_main, 2000);
+setTimeout(greasemonkey_main, 100);
 
 
 function greasemonkey_main() {
@@ -36,8 +36,9 @@ function greasemonkey_main() {
 function setup_everything() {
 //alert('setting up all');
     setup_newels();
-    run_loopers();
-    setTimeout(setup_loopers, 500);
+    //run_loopers();
+    //setTimeout(setup_loopers, 500);
+    setup_loopers();
 }
 
 function setup_newels() {
@@ -62,6 +63,7 @@ function run_loopers() {
         makePanel();
         update_book_id(getBookName()); // will update QA when finished as well
         document.getElementById('bcq_posebookname').textContent = getBookName();
+        document.getElementById('bcq_ermsgpose').style.display = 'none';
         add_qmark_button();
     }
     if (current_book_id!=="") {
@@ -78,6 +80,4 @@ function run_long_loopers() {
         update_all_QA(current_book_id);
     }
 }
-
-
 
