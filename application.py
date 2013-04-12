@@ -76,6 +76,7 @@ answer:
 <input type="text" name="answer" value=""> <br/>
 questionID: 
 <input type="text" name="questionID" value=""> <br/>
+username: 
 <input type="text" name="username" value=""> <br/>
 <input type="submit" value="Add answer">
 </form>
@@ -125,7 +126,7 @@ def addBook(environ, start_response):
             conn.put_item(item)
             return json.dumps({"daffodil":0})
         except:
-            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to put book in DynamoDB"})
+            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to put book %s in DynamoDB" % bookID})
     else:
         return not_found(environ, start_response)
     
@@ -141,21 +142,24 @@ def addQuestion(environ, start_response):
             aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('Content-type', 'text/html')]
+        headers = [('Content-type', 'application/json')]
+        start_response(status, headers)
         qtable = conn.get_table('Questions')
         if 'questionID' in parameters:
             questionID = escape(parameters['questionID'][0])
         else:
             questionID = 'q' + str(generateID(conn, qtable))
-        item = qtable.new_item(
-            attrs={"questionID": questionID, 
-                "question": question,
-                "bookID": bookID,
-                "location": int(location),
-                "username": username} )
-        conn.put_item(item)
-        start_response(status, headers)
-        return [response + "Done"]
+        try:
+            item = qtable.new_item(
+                attrs={"questionID": questionID, 
+                    "question": question,
+                    "bookID": bookID,
+                    "location": int(location),
+                    "username": username} )
+            conn.put_item(item)
+            return json.dumps({"daffodil":0})
+        except:
+            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to put question %s in DynamoDB" % questionID})
     else:
         return not_found(environ, start_response)
     
@@ -170,20 +174,23 @@ def addAnswer(environ, start_response):
             aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('Content-type', 'text/html')]
+        headers = [('Content-type', 'application/json')]
+        start_response(status, headers)
         atable = conn.get_table('Answers')
         if 'answerID' in parameters:
             answerID = escape(parameters['answerID'][0])
         else:
             answerID = 'a' + str(generateID(conn, atable))
-        item = atable.new_item(
-            attrs={"answerID": answerID,
-                "answer": answer,
-                "questionID": questionID,
-                "username": username} )
-        conn.put_item(item)
-        start_response(status, headers)
-        return [response + "Done"]
+        try:
+            item = atable.new_item(
+                attrs={"answerID": answerID,
+                    "answer": answer,
+                    "questionID": questionID,
+                    "username": username} )
+            conn.put_item(item)
+            return json.dumps({"daffodil":0})
+        except:
+            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to put answer %s in DynamoDB" % answerID})
     else:
         return not_found(environ, start_response)
 
