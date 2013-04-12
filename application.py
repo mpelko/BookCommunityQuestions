@@ -320,8 +320,13 @@ def deleteBook(environ, start_response):
         headers = [('Content-type', 'application/json')]
         start_response(status, headers)
         btable = conn.get_table('Books')
+        lastAddedID = 'b' + str(generateID(conn, btable) - 1)
         try:
-            item = conn.get_item( table=btable, hash_key=bookID)
+            #overwriting with the last added
+            item = conn.get_item( table=btable, hash_key=lastAddedID)
+            item.add_attibute("bookID", bookID)
+            item.save()
+            item = conn.get_item( table=btable, hash_key=lastAddedID)
             conn.delete_item(item)
             return json.dumps({"daffodil":0})
         except:
@@ -337,7 +342,7 @@ urls = [
     (r'getbookid/?$', getBookID),
     (r'getquestions/?$', getQuestions),
     (r'getanswers/?$', getAnswers),
-    (r'deletebool/?$', deleteBook),
+    (r'deletebook/?$', deleteBook),
 ]
 def application(environ, start_response):
     """
