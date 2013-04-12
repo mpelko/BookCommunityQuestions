@@ -99,7 +99,7 @@ function addPoseForm() {
 //alert('adding pose form');
 //doc2=document.getElementById("KindleReaderIFrame").contentDocument;
 var bgmask_container = document.createElement("div");
-bgmask_container.innerHTML = '<div id="bcq_posemask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(50,50,50,0.7);z-index:10000;display:none;"><div id="bcq_poseform" style="border-radius: 25px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(40, 40, 40); padding: 30px; position: absolute;"><form onsubmit="return false;"><p>Submit your question about this book: <i id="bcq_posebookname">' + getBookName() + '</i></p><p>Question:</p><textarea id="bcq_qsubmitinput" name="question-title" style="width:90%;height:100px;display:block;margin:auto;"></textarea><br/><div style="margin:auto;text-align:center;"><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button id="bcq_posecancelbutton" type="button">Cancel</button></div><form></div></div>';
+bgmask_container.innerHTML = '<div id="bcq_posemask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(50,50,50,0.7);z-index:10000;display:none;"><div id="bcq_poseform" style="border-radius: 25px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(40, 40, 40); padding: 30px; position: absolute;"><form onsubmit="return false;"><p>Submit your question about this book: <i id="bcq_posebookname">' + getBookName() + '</i></p><p>Question:</p><textarea id="bcq_qsubmitinput" name="question-title" style="width:90%;height:100px;display:block;margin:auto;"></textarea><p id="bcq_ermsgpose" class="bcq_ermsg" style="display:none;">Question cannot be blank</p><div style="margin:5px auto;text-align:center;"><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button id="bcq_posecancelbutton" type="button">Cancel</button></div><form></div></div>';
 document.body.appendChild(bgmask_container);
 
 document.getElementById('bcq_posesubmitbutton').addEventListener('click', submitPoseForm);
@@ -122,34 +122,42 @@ function submitPoseForm() {
 //alert('Submitting question');
     var loc = get_read_loc();
     var qtext = document.getElementById('bcq_qsubmitinput').value;
-// Do something with this to submit it
-// Check if submission is successful
-// Tell the user whether or not successful
-// Hide the submission box if appropriate
-//alert('Sending question ' + qtext + ' ' + book + ' ' + loc);
+    // Do something with this to submit it
+    // Check if submission is successful
+    // Tell the user whether or not successful
+    // Hide the submission box if appropriate
+    //alert('Sending question ' + qtext + ' ' + book + ' ' + loc);
+    
+    // If no text, show error message and stop
+    if (qtext=='') {
+        document.getElementById('bcq_ermsgpose').style.display = 'block';
+        return false;
+    }
+    
+    // If not logged in, show login form and stop
+    if (!check_login()) {return false};
+    
+    // If logged in, send the question and update HTML
+    send_question(qtext, getUsername(), current_book_id, loc);
 
-// If not logged in, show login form and stop
-if (!check_login()) {return false};
-
-// If logged in, send the question and update HTML
-send_question(qtext, getUsername(), current_book_id, loc);
-
-//alert(' question sent');
-document.getElementById('bcq_posesubmitbutton').value = 'Question sent';
-document.getElementById('bcq_posesubmitbutton').disabled = true;
-
-setTimeout(hidePoseForm,500);
-//setTimeout(updatePanel,700);
-setTimeout(resetPoseForm,700)
-// Don't refresh the page
-    updatePanelQA();
-return false;
+    //alert(' question sent');
+    document.getElementById('bcq_posesubmitbutton').value = 'Question sent';
+    document.getElementById('bcq_posesubmitbutton').disabled = true;
+    
+    // should only do this on successful post
+    setTimeout(hidePoseForm,500);
+    //setTimeout(updatePanel,700);
+    setTimeout(resetPoseForm,700);
+    
+    // Don't refresh the page
+    return false;
 }
 
 function resetPoseForm() {
     document.getElementById('bcq_posesubmitbutton').value = 'Post Question';
     document.getElementById('bcq_posesubmitbutton').disabled = false;
     document.getElementById('bcq_qsubmitinput').value = '';
+    document.getElementById('bcq_ermsgpose').style.display = 'none';
 }
 
 
@@ -159,16 +167,12 @@ function check_login() {
     if (isLoggedIn()) {
         return true;
     }
-    else {
-        var usr = prompt("Please enter your username","");
-        if (usr!=null && usr!="") {
-            login_as(usr);
-            return true;
-        }
-        else {
-            return false;
-        }
+    var usr = prompt("Please enter your username","");
+    if (usr==null || usr=="") {
+        return false;
     }
+    login_as(usr);
+    return true;
 }
 
 // --------------------- Forum panel ------------------------
@@ -203,24 +207,36 @@ function add_qmark_button() {
 function makePanel() {
 //alert('making panel');
 
-    document.body.style.background = "#e8e8e0"; // "#f2f2e2";
-
    // Create the question content panel.
     var container = document.getElementById("KindleReaderContainer");
     var qcontent = document.createElement("div");
    
+    document.body.style.background = "#e8e8e0"; // "#f2f2e2";
+    qcontent.style.background = "#e8e8e0"; // "#f2f2e2";
     qcontent.id = "question_content";
     qcontent.style.position = "absolute";
     qcontent.style.float = "left";
     qcontent.style.width = "30%";
     qcontent.style.height = "100%";
-    qcontent.style.overflow = "scroll";
+    qcontent.style.overflowX = "scroll";
     qcontent.style.top = "0";
     qcontent.style.right = "0";
     qcontent.isout = false;
     
-    qcontent.innerHTML = '<div id="question_forum" style="margin:auto;padding:15px;"><h3>Q&A Forum</h3><div id="bcq_q-2"><p style="font-style:italic;">Loading...</p></div><div id="bcq_q-1"><p style="font-style:italic;display:none;">No questions here.</p></div></div>';
-
+    var contentinner = document.createElement("div");
+    contentinner.id = "question_forum";
+    contentinner.innerHTML = '<h3 style="margin:12px 0 0;">Q&A Forum</h3>';
+    
+    var newbutton = document.createElement('button');
+    newbutton.textContent = 'Pose a new question';
+    newbutton.style.display = 'block';
+    newbutton.style.margin = 'auto 0 0 auto';
+    newbutton.addEventListener('click',showPoseForm);
+    contentinner.appendChild(newbutton);
+    
+    qcontent.innerHTML += '<div id="bcq_q-2"><p style="font-style:italic;">Loading...</p></div><div id="bcq_q-1"><p style="font-style:italic;display:none;">No questions here.</p></div>';
+    
+    qcontent.appendChild(contentinner);
     container.appendChild(qcontent);
     
     hidePanel();
@@ -237,7 +253,6 @@ function makePanel() {
 
 function hidePanel() {
     // Get the question content panel.
-    var content = document.getElementById("KindleReaderContainer");
     var qcontent = document.getElementById("question_content");
 
     // Give the panel dimensions
@@ -251,7 +266,6 @@ function hidePanel() {
 
 function showPanel() {
    // Get the question content panel.
-   var content = document.getElementById("KindleReaderContainer");
    var qcontent = document.getElementById("question_content");
    var qforum = document.getElementById("question_forum");
 
@@ -287,28 +301,35 @@ function updatePanelQA() {
     // If it does exist, reset the answers within it
     var qforum = document.getElementById("question_forum");
     if (qforum==null) {return false};
-    
+
+//console.log('update panel')
     var QAs = allQA
     for (var j=0; j<QAs.length; j++) {
         Q = QAs[j];
-        divid = 'bcq_q' + Q.questionID;
+//console.log('for Q ' + Q.questionID)
+        divid = 'bcq_q' + Q.questionID + '_inner';
         qdiv = document.getElementById(divid);
         if (qdiv==null) {
             //append question
+//console.log('add new q')
             qd = make_qnode(Q);
             qforum.appendChild(qd);
         }
         else {
+//console.log('found q')
             //update answers
             var x = qdiv.children;
+//console.log('has '+ x.length + ' children')
             for (i=0; i<x.length; i++) {
                 if (x[i].hasAttribute('is_answs')) {
                     y = x[i];
                     // Botched method
                     if (y.children.length == Q.answers.length) {
                         // do nothing
+//console.log('ans do nothing')
                     }
                     else {
+//console.log('ans do something')
                         var div = document.createElement('div');
                         div.innerHTML = html_answers(Q.answers);
                         var newy = div.firstChild
@@ -337,17 +358,16 @@ function make_qnode(Q) {
     var d = document.createElement('div');
     d.id = 'bcq_q' + Q.questionID;
     d.qid= Q.questionID;
-    d.className = 'bcq_q';
+    d.className = 'bcq_q bcq_qcontracted';
     var h = document.createElement('h4');
     h.innerHTML = Q.title + ' <span class="bcq_usrname"> - ' + Q.username + '</span>';
     h.addEventListener('click', toggle_q_expansion);
-    h.className = 'bcq_hexpanded';
     h.style.cursor = 'pointer';
     d.appendChild(h);
     
     var d2 = document.createElement('div');
     d2.id = 'bcq_q' + Q.questionID + '_inner';
-    d2.className = 'bcq_qexpanded';
+    d2.className = 'bcq_q_inner';
     d2.innerHTML += html_answers(Q.answers);
     
 //    var gt = document.createElement('input');
@@ -370,7 +390,7 @@ function make_qnode(Q) {
     f.onsubmit=function() {return false;};
     var t = document.createElement('textarea');
     t.id='bcq_q' + Q.questionID + '_ta';
-    t.style.width = '100%';
+    t.style.width = '95%';
     t.style.height = '100px';
     var i = document.createElement('input');
     i.id='bcq_q' + Q.questionID + '_answbutton';
@@ -378,8 +398,15 @@ function make_qnode(Q) {
     i.type="submit";
     i.value="Add answer";
     i.addEventListener('click', sendAnswerForm);
+    var e = document.createElement('p');
+    e.id='bcq_q' + Q.questionID + '_ermsg';
+    e.className = 'bcq_ermsg';
+    e.textContent = 'Answer cannot be blank';
+    e.style.display = 'none';
+    
     f.appendChild(t);
     f.appendChild(i);
+    f.appendChild(e);
 
     d2.appendChild(f);
     d.appendChild(d2);
@@ -387,15 +414,9 @@ function make_qnode(Q) {
 }
 
 function toggle_q_expansion() {
-    var d2 = this.nextSibling;
-    if (d2.className=='bcq_qexpanded') {
-        d2.className = 'bcq_qcontracted';
-        this.className = 'bcq_hcontracted';
-    }
-    else if (d2.className=='bcq_qcontracted') {
-        d2.className = 'bcq_qexpanded';
-        this.className = 'bcq_hexpanded';
-    }
+    var d = this.parentNode;
+    d.classList.toggle('bcq_qexpanded');
+    d.classList.toggle('bcq_qcontracted');
 }
 
 function goto_qloc() {
@@ -417,31 +438,25 @@ function html_answers(answs) {
 }
 
 function updatePanelLoc() {
-return;
     var QAs = allQA
     location = get_read_loc();
     nshown = 0;
     for (var j=0; j<QAs.length; j++) {
         Q = QAs[j];
-        divid = 'bcq_q' + Q.questionID;
-        qdiv = document.getElementById(divid);
-        if (qdiv==null) {
+        var divid = 'bcq_q' + Q.questionID;
+        var d = document.getElementById(divid);
+        if (d==null) {
             updatePanelQA();
             continue;
         }
         if (Q.location-2 < location && location < Q.location+25) {
-            qdiv.style.display = "block";
-            nshown++;
+            d.classList.add('bcq_qexpanded');
+            d.classList.remove('bcq_qcontracted');
         }
         else {
-            qdiv.style.display = "none";
+            d.classList.remove('bcq_qexpanded');
+            d.classList.add('bcq_qcontracted');
         }
-    }
-    if (nshown>0) {
-        document.getElementById('bcq_q-1').style.display = "none";
-    }
-    else {
-        document.getElementById('bcq_q-1').style.display = "block";
     }
 }
 
@@ -451,6 +466,13 @@ function sendAnswerForm() {
     var loc = get_read_loc();
     var qid = this.qid;
     
+    // If text is empty
+    if (answer=='') {
+        // show error message
+        this.nextSibling.style.display = 'block';
+        return false;
+    }
+    
     // If not logged in, show login form and stop
     if (!check_login()) {return false};
     
@@ -458,6 +480,7 @@ function sendAnswerForm() {
     send_answer(answer, getUsername(), qid, current_book_id);
 // ** Should only delete text if successful!
     this.previousSibling.value = "";
+    this.nextSibling.style.display = 'none';
 //    updatePanelQA();
 //alert(get_the_html_questions(current_book_id))
     return false;
@@ -468,7 +491,7 @@ function sendAnswerForm() {
 function handleUpdatedQA() {
     document.getElementById('bcq_q-2').style.display = "none";
     updatePanelQA();
-    updatePanelLoc();
+    refreshQAloc();
 }
 
 

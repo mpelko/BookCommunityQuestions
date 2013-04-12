@@ -48,12 +48,14 @@ function hasBookChanged() {
         // reset book name, and wait
         current_book_id = "";
         allQA = [];
+        current_book_name = "";
         return false;
     }
     new_book_name = getBookName();
     if (new_book_name==null || new_book_name=="") {
         // Have landed straight onto Library page
         // do nothing, as there is nothing to do...?
+        current_book_name = "";
         return false;
     }
     else if (new_book_name!==current_book_name){
@@ -64,4 +66,23 @@ function hasBookChanged() {
     else {
         return false;
     }
+}
+
+
+
+function login_as(usr) {
+    username = usr;
+}
+
+function isLoggedIn() {
+    if (getUsername()=="") {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function getUsername() {
+    return username;
 }
