@@ -1,28 +1,50 @@
-//base_url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com"
+AWS_url = "http://nuclearscotland-env.elasticbeanstalk.com"
 
 function update_book_id_AWSDB(book_title)
 {
-    var url = base_url + "/getbookid/?booktitle="+book_title
+    var url = AWS_url + "/getbookid/?booktitle="+book_title
     
     function handle_JSON(data){
         current_book_id=data[0]["bookID"]
+        update_all_QA(current_book_id);
     }
     
     $.getJSON( url + "&callback=?", null,  handle_JSON);
 }
 
+function fix_questions_tags(data){
+    if(data==[]){
+        return []
+    }
+    result = []
+    for (var i = 0; i < data.length; i++) {
+        q = data[i]
+        q["title"]=q["question"]
+        delete q.question
+        answs=[]
+        for (var j = 0; j < q["answers"].length; j++) {
+            a = q["answers"][j]
+            a["text"]=a["answer"]
+            delete a.answer
+            answs.push(a)
+        }
+        q["answers"] = answs
+        result.push(q)
+    }
+    return result
+}
+
 function QA_update_all_AWSDB(book_id)
 {
-    // TODO: do the actual implementation
     if(book_id == ""){
         return
     }
     
-    var url = "http://127.0.0.1:8080/get/QAs?bid="+book_id
-    //var url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com/getquestions?bookID=" + book_id
+    var url = AWS_url + "/getquestions/?bookID="+book_id
     
     function handle_JSON(data){
-        allQA = data["QAs"]
+        allQA = fix_questions_tags(data)
+        handleUpdatedQA();
     }
     
     $.getJSON( url + "&callback=?", null,  handle_JSON);
@@ -30,33 +52,25 @@ function QA_update_all_AWSDB(book_id)
 
 function send_question_AWSDB(question, usr, book_id, location)
 {
-   // TODO: do the actual implementation
- 
-    //var url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com/getquestions?bookID=" + book_id
-    var url = "http://127.0.0.1:8080/submit/Q"
-    var data = {"title":question, "username":usr, "bid":book_id, "location":location}
+    var url = AWS_url + "/addquestion/"
+    var data = {"question":question, "username":usr, "bookID":book_id, "location":location}
     
     function handle_JSON(data){
-        // could be used to implement what to do with the server response, if needed
-        return
+        update_all_QA(book_id);
     }
         
-    $.getJSON( url + "?callback=?", data);
+    $.getJSON( url + "?callback=?", data, handle_JSON);
 
 }
     
 function send_answer_AWSDB(answer, usr, q_id, book_id)
 {
-    // TODO: do the actual implementation
- 
-    //var url = "http://nuclearscotland-env-tyc9qsrnmg.elasticbeanstalk.com/getquestions?bookID=" + book_id
-    var url = "http://127.0.0.1:8080/submit/A"
-    var data = {"text":answer, "username":usr, "bid":book_id, "qid":q_id}
+    var url = AWS_url + "/addanswer/"
+    var data = {"answer":answer, "username":usr, "questionID":q_id}
     
     function handle_JSON(data){
-        // could be used to implement what to do with the server response, if needed
-        return
+        update_all_QA(book_id);
     }
         
-    $.getJSON( url + "?callback=?", data);
+    $.getJSON( url + "?callback=?", data, handle_JSON);
 }
