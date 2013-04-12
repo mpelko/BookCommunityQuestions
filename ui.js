@@ -39,7 +39,7 @@ function refreshMenuSep() {
 //    }
 }
 
-function refreshQandApanel() {
+function refreshQAloc() {
     var pres_loc = get_read_loc();
     if (last_loc!=pres_loc) {
         updatePanelLoc();
@@ -47,6 +47,10 @@ function refreshQandApanel() {
     last_loc = pres_loc;
 }
 
+function refreshQMark() {
+    var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
+    var qbutton = doc2.getElementById("bcq_qbutton");
+}
 
 // --------------------- Posing a new Question ------------------------
 
@@ -317,9 +321,6 @@ function updatePanelQA() {
             }
         }
     }
-    if (QAs.length>0) {
-        document.getElementById('bcq_q-2').style.display = "none";
-    }
 }
 
 
@@ -417,13 +418,20 @@ function sendAnswerForm() {
     
     // If logged in, send the question and update HTML
     send_answer(answer, getUsername(), qid, current_book_id);
-// only delete text if successful
+// ** Should only delete text if successful!
     this.previousSibling.value = "";
-    updatePanelQA();
+//    updatePanelQA();
 //alert(get_the_html_questions(current_book_id))
     return false;
 }
 
+
+
+function handleUpdatedQA() {
+    document.getElementById('bcq_q-2').style.display = "none";
+    updatePanelQA();
+    updatePanelLoc();
+}
 
 
 // Defunct

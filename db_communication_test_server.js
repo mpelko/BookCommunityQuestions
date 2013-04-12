@@ -38,13 +38,13 @@ function send_question_test_server(question, usr, book_id, location)
     var data = {"title":question, "username":usr, "bid":book_id, "location":location};
     
     function handle_JSON(data){
-        update_all_QA(current_book_id);
+        update_all_QA(book_id);
     }
         
     $.getJSON( url + "?callback=?", data, handle_JSON);
 
 }
-    
+
 function send_answer_test_server(answer, usr, q_id, book_id)
 {
 //alert('answer to test server: '+answer+' '+usr+' '+q_id+' '+book_id);
@@ -52,7 +52,7 @@ function send_answer_test_server(answer, usr, q_id, book_id)
     var data = {"text":answer, "username":usr, "bid":book_id, "qid":q_id};
     
     function handle_JSON(data){
-        update_all_QA(current_book_id);
+        update_all_QA(book_id);
     }
         
     $.getJSON( url + "?callback=?", data, handle_JSON);
