@@ -92,7 +92,7 @@ def generateID(conn, table):
     counter = table.get_item(hash_key="lastcount")
     count = counter["count"]
     counter.add_attribute(count, count+1)
-    table.put_item(counter)
+    conn.put_item(counter)
     #items = conn.scan(table)
     #for item in items:
      #   count = count + 1
