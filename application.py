@@ -96,7 +96,7 @@ def generateID(conn, table):
     #items = conn.scan(table)
     #for item in items:
      #   count = count + 1
-    return count + 1
+    return count
 
 def index(environ, start_response):
     conn = boto.dynamodb.connect_to_region(
