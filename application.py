@@ -89,11 +89,14 @@ username:
 """
 
 def generateID(conn, table):
-    count = 1
-    items = conn.scan(table)
-    for item in items:
-        count = count + 1
-    return count
+    counter = table.get_item(hash_key="lastcount")
+    count = count["count"]
+    counter.add_attribute(count, count+1)
+    table.put_item(counter)
+    #items = conn.scan(table)
+    #for item in items:
+     #   count = count + 1
+    return count + 1
 
 def index(environ, start_response):
     conn = boto.dynamodb.connect_to_region(
