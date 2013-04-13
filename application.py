@@ -441,6 +441,8 @@ urls = [
     (r'getquestions/?$', getQuestions),
     (r'getanswers/?$', getAnswers),
     (r'deletebook/?$', deleteBook),
+    (r'deletequestion/?$', deleteQuestion),
+    (r'deleteanswer/?$', deleteAnswer),
 ]
 def application(environ, start_response):
     """
