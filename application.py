@@ -90,7 +90,7 @@ username:
 
 def generateID(conn, table):
     counter = table.get_item(hash_key="lastcount")
-    count = counter["count"]
+    count = int(counter["count"])
     counter.add_attribute("count", count+1)
     counter.save()
     #items = conn.scan(table)
