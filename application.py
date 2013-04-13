@@ -93,9 +93,6 @@ def generateID(conn, table):
     count = counter["count"] + 1
     counter.add_attribute("count", 1)
     counter.save()
-    #items = conn.scan(table)
-    #for item in items:
-     #   count = count + 1
     return count
 
 def index(environ, start_response):
@@ -351,20 +348,87 @@ def deleteBook(environ, start_response):
             aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
             aws_secret_access_key='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')
         status = '200 OK'
-        headers = [('Content-type', 'application/json')]
+        if 'callback' in parameters:
+            callback_function = escape(parameters['callback'][0])
+            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+        else:
+            headers = [('content-type','application/json'), ('charset','UTF-8')]
         start_response(status, headers)
         btable = conn.get_table('Books')
-        lastAddedID = 'b' + str(generateID(conn, btable) - 1)
         try:
-            #overwriting with the last added
-            item = conn.get_item( table=btable, hash_key=lastAddedID)
-            item.add_attibute("bookID", bookID)
-            btable.put_item(item)
-            item = conn.get_item( table=btable, hash_key=lastAddedID)
+            item = conn.get_item( table=btable, hash_key=bookID)
             conn.delete_item(item)
-            return json.dumps({"daffodil":0})
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":0}))
+            else:
+                return json.dumps({"daffodil":0})
         except:
-            return json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete book %s in DynamoDB" % bookID})
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete book %s from DynamoDB" % bookID}))
+            else:
+                return json.dumps(json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete book %s from DynamoDB" % bookID}))
+    else:
+        return not_found(environ, start_response)
+        
+def deleteQuestion(environ, start_response):
+    parameters = parse_qs(environ.get('QUERY_STRING', ''))
+    if ('questionID' in parameters):
+        questionID = escape(parameters['questionID'][0])
+        conn = boto.dynamodb.connect_to_region(
+            'us-west-2',
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
+        status = '200 OK'
+        if 'callback' in parameters:
+            callback_function = escape(parameters['callback'][0])
+            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+        else:
+            headers = [('content-type','application/json'), ('charset','UTF-8')]
+        start_response(status, headers)
+        qtable = conn.get_table('Questions')
+        try:
+            item = conn.get_item( table=qtable, hash_key=questionID)
+            conn.delete_item(item)
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":0}))
+            else:
+                return json.dumps({"daffodil":0})
+        except:
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete question %s from DynamoDB" % questionID}))
+            else:
+                return json.dumps(json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete question %s from DynamoDB" % questionID}))
+    else:
+        return not_found(environ, start_response)
+        
+def deleteAnswer(environ, start_response):
+    parameters = parse_qs(environ.get('QUERY_STRING', ''))
+    if ('answerID' in parameters):
+        answerID = escape(parameters['answerID'][0])
+        conn = boto.dynamodb.connect_to_region(
+            'us-west-2',
+            aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+            aws_secret_access_key='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')
+        status = '200 OK'
+        if 'callback' in parameters:
+            callback_function = escape(parameters['callback'][0])
+            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+        else:
+            headers = [('content-type','application/json'), ('charset','UTF-8')]
+        start_response(status, headers)
+        atable = conn.get_table('Answers')
+        try:
+            item = conn.get_item( table=atable, hash_key=answerID)
+            conn.delete_item(item)
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":0}))
+            else:
+                return json.dumps({"daffodil":0})
+        except:
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete answer %s from DynamoDB" % answerID}))
+            else:
+                return json.dumps(json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete answer %s from DynamoDB" % answerID}))
     else:
         return not_found(environ, start_response)
     
