@@ -360,7 +360,7 @@ def deleteBook(environ, start_response):
         questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
         for question in questions:
             questionID = question["questionID"]
-            answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
+            answers = conn.scan(atable, scan_filter={'questionID': condition.EQ(questionID)})
             for answer in answers:
                 conn.delete_item(answer)
             conn.delete_item(question)
