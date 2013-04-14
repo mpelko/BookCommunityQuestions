@@ -444,6 +444,44 @@ def deleteAnswer(environ, start_response):
                 return json.dumps(json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete answer %s from DynamoDB" % answerID}))
     else:
         return not_found(environ, start_response)
+        
+def deleteEverything(environ, start_response):
+    parameters = parse_qs(environ.get('QUERY_STRING', ''))
+    conn = boto.dynamodb.connect_to_region(
+        'us-west-2',
+        aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
+        aws_secret_access_key='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')
+    status = '200 OK'
+    if 'callback' in parameters:
+        callback_function = escape(parameters['callback'][0])
+        headers = [('content-type','application/javascript'), ('charset','UTF-8')]
+    else:
+        headers = [('content-type','application/json'), ('charset','UTF-8')]
+    start_response(status, headers)
+    btable = conn.get_table('Books')
+    qtable = conn.get_table('Questions')
+    atable = conn.get_table('Answers')
+    books = conn.scan(btable)
+    questions = conn.scan(qtable)
+    answers = conn.scan(atable)
+    for answer in answers:
+        conn.delete_item(answer)
+    try:
+        for book in books:
+            conn.delete_item(book)
+        for question in questions:
+            conn.delete_item(question)
+        for answer in answers:
+            conn.delete_item(answer)
+        if 'callback' in parameters:
+            return jsonp(callback_function, json.dumps({"daffodil":0}))
+        else:
+            return json.dumps({"daffodil":0})
+    except:
+        if 'callback' in parameters:
+            return jsonp(callback_function, json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to empty tables in DynamoDB"}))
+        else:
+            return json.dumps(json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to empty tables in DynamoDB"}))
     
 urls = [
     (r'^$', index),
@@ -456,6 +494,7 @@ urls = [
     (r'deletebook/?$', deleteBook),
     (r'deletequestion/?$', deleteQuestion),
     (r'deleteanswer/?$', deleteAnswer),
+    (r'deleteeverything/?$', deleteEverything),
 ]
 def application(environ, start_response):
     """
