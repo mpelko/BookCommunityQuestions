@@ -355,6 +355,13 @@ def deleteBook(environ, start_response):
             headers = [('content-type','application/json'), ('charset','UTF-8')]
         start_response(status, headers)
         btable = conn.get_table('Books')
+        questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
+        for question in questions:
+            questionID = question["questionID"]
+            answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
+            for answer in answers:
+                conn.delete_item(answer)
+            conn.delete_item(question)
         try:
             item = conn.get_item( table=btable, hash_key=bookID)
             conn.delete_item(item)
