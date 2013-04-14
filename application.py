@@ -355,6 +355,8 @@ def deleteBook(environ, start_response):
             headers = [('content-type','application/json'), ('charset','UTF-8')]
         start_response(status, headers)
         btable = conn.get_table('Books')
+        qtable = conn.get_table('Questions')
+        atable = conn.get_table('Answers')
         questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
         for question in questions:
             questionID = question["questionID"]
