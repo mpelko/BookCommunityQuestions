@@ -1,0 +1,28 @@
+<!-- Questions -->
+<a id="new_question" class="buttont" href=
+"{% url "BCAforum.views.post" 'new_question' pk %}">Ask a new question</a>
+<br />
+<br />
+
+<div id="list">
+<table border="0" cellpadding="4" width="100%">
+    <tr>
+        <td>Topics</td>
+        <td>Replies</td>
+        <td></td>
+    </tr>
+
+    {% for question in questions %}
+    <tr>
+        <td {% if forloop.last %}class="last"{% endif %}>
+        <div class="title"> <a href="{% url "BCAforum.views.question" question.questionID %}">{{ question.question }}</a>
+            </div></td>
+        <td {% if forloop.last %}class="last"{% endif %}>{{ question.num_answs }}</td>
+        <td {% if forloop.last %}class="last"{% endif %}>
+            <a class="button" href="{% url "BCAforum.views.question" question.questionID %}">VIEW</a>
+        </td>
+    </tr>
+
+    {% endfor %}
+</table>
+</div>

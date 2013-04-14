@@ -1,0 +1,18 @@
+<!-- Posts  -->
+<div class="ttitle">{{ title }}</div>
+<div id="list">
+
+    {% for answer in answers %}
+        <div class="post">
+            <span class="title">{{ answer.answer }}</span><br />
+            by {{ answer.username }} <br /><br />
+            {{ answer.text }} <br />
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Next/Prev page links
+    ...
+-->
+
+<a class="button" href="{% url "BCAforum.views.post" 'reply' pk %}">Reply</a>

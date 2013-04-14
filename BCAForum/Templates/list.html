@@ -1,0 +1,22 @@
+<!-- Forums  -->
+<div id="list">
+<table border="0" cellpadding="4" width="100%">
+    <tr>
+        <td>Book title</td>
+        <td>Nr. of questions</td>
+        <td></td>
+    </tr>
+
+    {% for book in books %}
+    <tr>
+        <td {% if forloop.last %}class="last"{% endif %}>
+        <div class="title"><a href="{% url "BCAforum.views.book" book.bookID %}"> {{ book.title }}</a>
+            </div></td>
+        <td {% if forloop.last %}class="last"{% endif %}>{{ book.num_quest }}</td>
+        <td {% if forloop.last %}class="last"{% endif %}>
+            <a class="button" href="{% url "BCAforum.views.book" book.bookID %}">VIEW</a>
+        </td>
+    </tr>
+    {% endfor %}
+</div>
+
