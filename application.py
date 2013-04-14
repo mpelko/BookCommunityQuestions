@@ -395,6 +395,10 @@ def deleteQuestion(environ, start_response):
             headers = [('content-type','application/json'), ('charset','UTF-8')]
         start_response(status, headers)
         qtable = conn.get_table('Questions')
+        atable = conn.get_table('Answers')
+        answers = conn.scan(atable, scan_filter={'questionID': condition.EQ(questionID)})
+        for answer in answers:
+            conn.delete_item(answer)
         try:
             item = conn.get_item( table=qtable, hash_key=questionID)
             conn.delete_item(item)
