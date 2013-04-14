@@ -228,10 +228,17 @@ function makePanel() {
     contentinner.innerHTML = '<h3 style="margin:12px 0 0;">Q&A Forum</h3>';
     
     var newbutton = document.createElement('button');
-    newbutton.textContent = 'Pose a new question';
-    newbutton.style.display = 'block';
-    newbutton.style.margin = 'auto 0 0 auto';
+    //newbutton.textContent = 'Add a new question';
+    newbutton.className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+    newbutton.setAttribute('type','button');
+    newbutton.setAttribute('role', 'button');
+    //newbutton.style.display = 'block';
+    //newbutton.style.margin = 'auto 0 0 auto';
     newbutton.addEventListener('click',showPoseForm);
+    var button_text_span=document.createElement('span');
+    button_text_span.className="ui-button-text"
+    button_text_span.innerHTML='Add a new question';
+    newbutton.appendChild(button_text_span);
     contentinner.appendChild(newbutton);
     
     qcontent.innerHTML += '<div id="bcq_q-2"><p style="font-style:italic;">Loading...</p></div><div id="bcq_q-1"><p style="font-style:italic;display:none;">No questions here.</p></div>';
