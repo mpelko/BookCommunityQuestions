@@ -272,7 +272,9 @@ def getQuestions(environ, start_response):
         qtable = conn.get_table('Questions')
         jsonlist = []
         questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
-        for question in questions:
+        questions_list = list(questions)
+        sorted_questions = sorted(questions_list, key=lambda k: k['location']) 
+        for question in sorted_questions:
             jsondict = {"questionID":question["questionID"], 
                 "title":question["question"], 
                 "location":int(question["location"]), 
