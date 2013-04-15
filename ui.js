@@ -408,15 +408,27 @@ function make_qnode(Q) {
     i.className = "bcq_button";
     i.value="Add answer";
     i.addEventListener('click', sendAnswerForm);
-    var e = document.createElement('p');
-    e.id='bcq_q' + Q.questionID + '_ermsg';
-    e.className = 'bcq_ermsg';
-    e.textContent = 'Answer cannot be blank';
-    e.style.display = 'none';
+    var eb = document.createElement('span');
+    eb.id='bcq_q' + Q.questionID + '_ermsg_blank';
+    eb.className = 'bcq_ermsg';
+    eb.textContent = 'Answer cannot be blank.';
+    eb.style.display = 'none';
+    var es = document.createElement('span');
+    es.id='bcq_q' + Q.questionID + '_ermsg_server';
+    es.className = 'bcq_ermsg';
+    es.textContent = 'Server error. Please retry.';
+    es.style.display = 'none';
+    var s = document.createElement('span');
+    s.id='bcq_q' + Q.questionID + '_sucmsg';
+    s.className = 'bcq_sucmsg';
+    s.textContent = 'Answer sent!';
+    s.style.display = 'none';
     
     f.appendChild(t);
     f.appendChild(i);
-    f.appendChild(e);
+    f.appendChild(eb);
+    f.appendChild(es);
+    f.appendChild(s);
 
     d2.appendChild(f);
     d.appendChild(d2);
@@ -442,7 +454,7 @@ function html_answers(answs) {
         html += '</ul>';
     }
     else {
-        html = '<i is_answs=true style="padding:5px;">This question is unanswered. Can you help?</i>';
+        html = '<i is_answs=true style="padding:6px 0; display:block;">This question is unanswered. Can you help?</i>';
     }
     return html;
 }
@@ -487,15 +499,36 @@ function sendAnswerForm() {
     if (!check_login()) {return false};
     
     // If logged in, send the question and update HTML
-    send_answer(answer, getUsername(), qid, current_book_id);
+    send_answer(answer, getUsername(), qid, current_book_id, this);
+    
+    
+    
 // ** Should only delete text if successful!
-    this.previousSibling.value = "";
-    this.nextSibling.style.display = 'none';
+//    this.previousSibling.value = "";
+//    this.nextSibling.style.display = 'none';
 //    updatePanelQA();
 //alert(get_the_html_questions(current_book_id))
     return false;
 }
 
+
+function answerSendSuccess(el) {
+    el.disabled = false;
+    el.previousSibling.value = "";
+    el.nextSibling.style.display = "none";
+    el.nextSibling.nextSibling.style.display = "none";
+    el.nextSibling.nextSibling.nextSibling.style.display = "block";
+    setTimeout(function() {el.nextSibling.nextSibling.nextSibling.style.display = "none";}, 4000);
+}
+
+
+function answerSendFailure(el) {
+    el.disabled = false;
+    el.nextSibling.style.display = "none";
+    el.nextSibling.nextSibling.style.display = "block";
+    el.nextSibling.nextSibling.nextSibling.style.display = "none";
+    setTimeout(function() {el.nextSibling.nextSibling.style.display = "none";}, 4000);
+}
 
 
 function handleUpdatedQA() {
