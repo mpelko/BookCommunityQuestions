@@ -225,7 +225,7 @@ function makePanel() {
     
     var contentinner = document.createElement("div");
     contentinner.id = "question_forum";
-    contentinner.innerHTML = '<h3 style="margin:12px 0 0;">Community Forum</h3>';
+    contentinner.innerHTML = '<h3 style="margin:12px 0 0;color:#f89900;">Community Forum</h3>';
     
     var newbutton = document.createElement('button');
 
@@ -233,8 +233,8 @@ function makePanel() {
     newbutton.className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
     newbutton.setAttribute('type','button');
     newbutton.setAttribute('role', 'button');
-    //newbutton.style.display = 'block';
-    //newbutton.style.margin = 'auto 0 0 auto';
+    newbutton.style.display = 'block';
+    newbutton.style.margin = 'auto 0 0 auto';
 
     newbutton.addEventListener('click',showPoseForm);
     var button_text_span=document.createElement('span');
@@ -454,7 +454,7 @@ function html_answers(answs) {
         html += '</ul>';
     }
     else {
-        html = '<i is_answs=true style="padding:6px 0; display:block;">This question is unanswered. Can you help?</i>';
+        html = '<i is_answs=true style="padding:6px 0; display:block;color:#949494;font-size:85%">No answers yet. Can you help?</i>';
     }
     return html;
 }
