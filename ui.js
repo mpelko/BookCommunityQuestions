@@ -211,8 +211,8 @@ function makePanel() {
     var container = document.getElementById("KindleReaderContainer");
     var qcontent = document.createElement("div");
    
-    document.body.style.background = "#e8e8e0"; // "#f2f2e2";
-    qcontent.style.background = "#e8e8e0"; // "#f2f2e2";
+    document.body.style.background = "#545454"; // "#f2f2e2";
+    qcontent.style.background = "#545454"; // "#f2f2e2";
     qcontent.id = "question_content";
     qcontent.style.position = "absolute";
     qcontent.style.float = "left";
