@@ -37,20 +37,20 @@ function update_all_QA(book_id)
     };
 }
 
-function send_answer(answer, usr, questionID, book_id)
+function send_answer(answer, usr, questionID, book_id, element_id)
 {
 //alert(answer+' '+usr+' '+questionID+' '+book_id);
     if (DEBUG)
     {
-        send_answer_DEBUG(answer, usr, questionID, book_id);
+        send_answer_DEBUG(answer, usr, questionID, book_id, element_id);
     }
     else {
         if(using_AWSDB){
-            send_answer_AWSDB(answer, usr, questionID, book_id);
+            send_answer_AWSDB(answer, usr, questionID, book_id, element_id);
         }
         else{        
             if(using_test_server){
-                send_answer_test_server(answer, usr, questionID, book_id);
+                send_answer_test_server(answer, usr, questionID, book_id, element_id);
             }
         };
     };    
