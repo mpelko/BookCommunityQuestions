@@ -52,3 +52,15 @@ function send_answer_AWSDB(answer, usr, q_id, book_id)
         
     $.getJSON( url + "?callback=?", data, handle_JSON);
 }
+
+function send_vote_AWSDB(answerID, usr, vote)
+{
+    var url = AWS_url + "/voteanswer/"
+    var data = {"answerID":answerID, "username":usr, "vote":vote}
+    
+    function handle_JSON(data){
+        update_all_QA(book_id);
+    }
+        
+    $.getJSON( url + "?callback=?", data, handle_JSON);    
+}
