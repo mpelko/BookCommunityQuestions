@@ -53,10 +53,28 @@ function send_answer(answer, usr, questionID, book_id)
                 send_answer_test_server(answer, usr, questionID, book_id);
             }
         };
-    };
-    
-    
+    };    
 }
+
+function send_vote(answerID, usr, vote)
+{
+//alert(answer+' '+usr+' '+questionID+' '+book_id);
+    if (DEBUG)
+    {
+        send_vote_DEBUG(answerID, usr, vote);
+    }
+    else {
+        if(using_AWSDB){
+            send_vote_AWSDB(answerID, usr, vote);
+        }
+        else{        
+            if(using_test_server){
+                send_vote_test_server(answerID, usr, vote);
+            }
+        };
+    };    
+}
+
 
 //wrapper function for stroing the q in the db
 function send_question(question, usr, book_id, location)
