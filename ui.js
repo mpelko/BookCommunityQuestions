@@ -491,7 +491,7 @@ function sendAnswerForm() {
     // If text is empty
     if (answer=='') {
         // show error message
-        this.nextSibling.style.display = 'block';
+        this.nextSibling.style.display = 'inline';
         return false;
     }
     
@@ -517,7 +517,7 @@ function answerSendSuccess(el) {
     el.previousSibling.value = "";
     el.nextSibling.style.display = "none";
     el.nextSibling.nextSibling.style.display = "none";
-    el.nextSibling.nextSibling.nextSibling.style.display = "block";
+    el.nextSibling.nextSibling.nextSibling.style.display = "inline";
     setTimeout(function() {el.nextSibling.nextSibling.nextSibling.style.display = "none";}, 4000);
 }
 
@@ -525,7 +525,7 @@ function answerSendSuccess(el) {
 function answerSendFailure(el) {
     el.disabled = false;
     el.nextSibling.style.display = "none";
-    el.nextSibling.nextSibling.style.display = "block";
+    el.nextSibling.nextSibling.style.display = "inline";
     el.nextSibling.nextSibling.nextSibling.style.display = "none";
     setTimeout(function() {el.nextSibling.nextSibling.style.display = "none";}, 4000);
 }

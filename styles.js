@@ -24,6 +24,9 @@ addGlobalStyle('.bcq_usrname {color:grey;font-size:small;font-style:italic;}');
 
 // Error messages
 addGlobalStyle('.bcq_ermsg {color:red;font-size:small;font-style:italic;margin:5px 0;}');
+addGlobalStyle('#question_forum .bcq_ermsg {color:#f88;}');
+addGlobalStyle('.bcq_sucmsg {color:green;font-size:small;font-style:italic;margin:5px 0;}');
+addGlobalStyle('#question_forum .bcq_sucmsg {color:#8f8;}');
 
 addGlobalStyle('#question_content,#bcq_poseform,textarea {font-family:Helvetica,​Arial,​sans-serif;}');
 addGlobalStyle('#question_forum {margin:auto;padding:15px;color:white;} #question_content {background-color:#2A2A2A}');
