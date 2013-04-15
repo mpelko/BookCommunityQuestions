@@ -299,6 +299,8 @@ def getAnswersforQ(conn, questionID):
     qtable = conn.get_table('Answers')
     jsonlist = []
     answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
+    answers_list = list(answers)
+    sorted_answers = sorted(answers_list, key=lambda k: k['answerID'])     
     for answer in answers:
         jsondict = {"answerID":answer["answerID"], "text":answer["answer"], "rank":answer["rank"], "username":answer["username"]}
         jsonlist.append(jsondict)
