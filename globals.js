@@ -6,3 +6,7 @@ var last_loc = 0;
 var username = '';
 var current_book_id = '';
 var current_book_name = '';
+console.log("before background_image is defined");
+//console.log(GM_getResourceURL("MyBG_Image"));
+//var background_image='url("' + GM_getResourceURL ("MyBG_Image") + '")';
+//console.log("after");

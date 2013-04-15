@@ -19,6 +19,7 @@
 //   * is a wildcard character
 //   .tld is magic that matches all top-level domains (e.g. .com, .co.uk, .us, etc.)
 
+//console.log(GM_getResourceURL("MyBG_Image"));
 
 //alert('begin');
 
