@@ -211,6 +211,7 @@ def addAnswer(environ, start_response):
                 attrs={"answerID": answerID,
                     "answer": answer,
                     "questionID": questionID,
+                    "rank": 0, 
                     "username": username} )
             conn.put_item(item)
             if 'callback' in parameters:
@@ -300,8 +301,8 @@ def getAnswersforQ(conn, questionID):
     answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
     answers_list = list(answers)
     sorted_answers = sorted(answers_list, key=lambda k: k['answerID'])     
-    for answer in sorted_answers:
-        jsondict = {"answerID":answer["answerID"], "text":answer["answer"], "username":answer["username"]}
+    for answer in answers:
+        jsondict = {"answerID":answer["answerID"], "text":answer["answer"], "rank":answer["rank"], "username":answer["username"]}
         jsonlist.append(jsondict)
     return jsonlist
     
@@ -318,7 +319,7 @@ def getAnswers(environ, start_response):
         jsonlist = []
         answers = conn.scan(qtable, scan_filter={'questionID': condition.EQ(questionID)})
         for answer in answers:
-            jsondict = {"answerID":answer["answerID"], "answer":answer["answer"], "username":answer["username"]}
+            jsondict = {"answerID":answer["answerID"], "answer":answer["answer"], "rank":answer["rank"], "username":answer["username"]}
             jsonlist.append(jsondict)
         response = json.dumps(jsonlist)
         if 'callback' in parameters:
