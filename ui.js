@@ -67,7 +67,7 @@ function addPoseButton() {
     newbutton.id = 'bcq_hoverbutton';
     newbutton.className="kindle_menu_button button_enabled ui-corner-right";
     newbutton.addEventListener('click',showPoseForm);
-    var newbuttontext = document.createTextNode("Pose question");
+    var newbuttontext = document.createTextNode("Question");
     newbutton.appendChild(newbuttontext);
     popupmenu.appendChild(newbutton);
 }
@@ -99,7 +99,7 @@ function addPoseForm() {
 //alert('adding pose form');
 //doc2=document.getElementById("KindleReaderIFrame").contentDocument;
 var bgmask_container = document.createElement("div");
-bgmask_container.innerHTML = '<div id="bcq_posemask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(50,50,50,0.7);z-index:10000;display:none;"><div id="bcq_poseform" style="border-radius: 25px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(40, 40, 40); padding: 30px; position: absolute;"><form onsubmit="return false;"><p>Submit your question about this book: <i id="bcq_posebookname">' + getBookName() + '</i></p><p>Question:</p><textarea id="bcq_qsubmitinput" name="question-title" style="width:90%;height:100px;display:block;margin:auto;"></textarea><p id="bcq_ermsgpose" class="bcq_ermsg" style="display:none;">Question cannot be blank</p><div style="margin:5px auto;text-align:center;"><input id="bcq_posesubmitbutton" type="submit" name="submit" value="Post Question"/><button id="bcq_posecancelbutton" type="button">Cancel</button></div><form></div></div>';
+bgmask_container.innerHTML = '<div id="bcq_posemask" style="position:absolute;left:0px;top:0px;height:100%;width:100%;background:rgba(50,50,50,0.7);z-index:10000;display:none;"><div id="bcq_poseform" style="border-radius: 25px; z-index: 10000; top: 20%; left: 20%; right: 20%; bottom: 20%; background: none repeat scroll 0% 0% rgb(250, 250, 250); border: 10px solid rgb(40, 40, 40); padding: 30px; position: absolute; min-height: 180px"><form onsubmit="return false;"><p>Ask a question about <i id="bcq_posebookname">' + getBookName() + '</i>.</p><textarea id="bcq_qsubmitinput" placeholder="Type your question here" name="question-title" style="width:90%;height:100px;display:block;margin:auto;"></textarea><p id="bcq_ermsgpose" class="bcq_ermsg" style="display:none;">Question cannot be blank</p><div style="margin:5px auto;text-align:center;"><button id="bcq_posecancelbutton" type="button" class-"bcq-ui-button">Cancel</button><button id="bcq_posesubmitbutton" type="submit" name="submit">Save</button></div><form></div></div>';
 document.body.appendChild(bgmask_container);
 
 document.getElementById('bcq_posesubmitbutton').addEventListener('click', submitPoseForm);
@@ -187,7 +187,7 @@ function add_qmark_button() {
     qbutton.className="header_bar_icon";
     var qicon = document.createElement("img");
     qicon.title = "Q&A Forum";
-    qicon.alt = "Q&A Forum";
+    qicon.alt = "Show questions";
     qicon.src = "https://s3-eu-west-1.amazonaws.com/amazonhack/qbuttonTr.png"
     qicon.height = "25";
     qicon.width="16";
@@ -225,13 +225,22 @@ function makePanel() {
     
     var contentinner = document.createElement("div");
     contentinner.id = "question_forum";
-    contentinner.innerHTML = '<h3 style="margin:12px 0 0;">Q&A Forum</h3>';
+    contentinner.innerHTML = '<h3 style="margin:12px 0 0;">Community Forum</h3>';
     
     var newbutton = document.createElement('button');
-    newbutton.textContent = 'Pose a new question';
-    newbutton.style.display = 'block';
-    newbutton.style.margin = 'auto 0 0 auto';
+
+    //newbutton.textContent = 'Add a new question';
+    newbutton.className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+    newbutton.setAttribute('type','button');
+    newbutton.setAttribute('role', 'button');
+    //newbutton.style.display = 'block';
+    //newbutton.style.margin = 'auto 0 0 auto';
+
     newbutton.addEventListener('click',showPoseForm);
+    var button_text_span=document.createElement('span');
+    button_text_span.className="ui-button-text"
+    button_text_span.innerHTML='Add a new question';
+    newbutton.appendChild(button_text_span);
     contentinner.appendChild(newbutton);
     
     qcontent.innerHTML += '<div id="bcq_q-2"><p style="font-style:italic;">Loading...</p></div><div id="bcq_q-1"><p style="font-style:italic;display:none;">No questions here.</p></div>';
