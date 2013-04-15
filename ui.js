@@ -233,21 +233,21 @@ function makePanel() {
     newbutton.className="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
     newbutton.setAttribute('type','button');
     newbutton.setAttribute('role', 'button');
-    //newbutton.style.display = 'block';
-    //newbutton.style.margin = 'auto 0 0 auto';
-
-    newbutton.addEventListener('click',showPoseForm);
-    var button_text_span=document.createElement('span');
-    button_text_span.className="ui-button-text"
-    button_text_span.innerHTML='Add a new question';
-    newbutton.appendChild(button_text_span);
+    newbutton.style.display = 'block';
+    newbutton.style.margin = 'auto 0 0 auto';
+    newbutton.innerHTML='Add a new question';
+    newbutton.id = 'bcq_addqbutton';
+    
     contentinner.appendChild(newbutton);
     
     contentinner.innerHTML += '<div id="bcq_q-2"><p style="font-style:italic;">Loading...</p></div><div id="bcq_q-1"><p style="font-style:italic;display:none;">No questions here.</p></div>';
     
+    
     qcontent.appendChild(contentinner);
     container.appendChild(qcontent);
     
+    document.getElementById('bcq_addqbutton').addEventListener('click',showPoseForm);
+
     hidePanel();
     
     var doc2=document.getElementById("KindleReaderIFrame").contentDocument;
