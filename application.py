@@ -488,38 +488,39 @@ def deleteEverything(environ, start_response):
         else:
             return json.dumps(json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to empty tables in DynamoDB"}))
     
-def voteAnswerUp(environ, start_response):
+def voteAnswer(environ, start_response):
     parameters = parse_qs(environ.get('QUERY_STRING', ''))
-    if 'answerID' in parameters:
+    if ('answerID' in parameters) and ('vote' in parameters):
         answerID = escape(parameters['answerID'][0])
+        vote = escape(parameters['vote'][0])
         conn = boto.dynamodb.connect_to_region(
             'us-west-2',
             aws_access_key_id='AKIAJMFCMKYSPE42Q7LQ',
             aws_secret_access_key='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')
         status = '200 OK'
         atable = conn.get_table('Answers')
-        jsonlist = []
-        atable.get_item(hash_key=answerID)
-        questions = conn.scan(qtable, scan_filter={'bookID': condition.EQ(bookID)})
-        questions_list = list(questions)
-        sorted_questions = sorted(questions_list, key=lambda k: k['location']) 
-        for question in sorted_questions:
-            jsondict = {"questionID":question["questionID"], 
-                "title":question["question"], 
-                "location":int(question["location"]), 
-                "username":question["username"],
-                "answers":getAnswersforQ(conn, question["questionID"])}
-            jsonlist.append(jsondict)
-        response = json.dumps(jsonlist)
         if 'callback' in parameters:
-            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
-            start_response(status, headers)
             callback_function = escape(parameters['callback'][0])
-            return jsonp(callback_function, response)
+            headers = [('content-type','application/javascript'), ('charset','UTF-8')]
         else:
             headers = [('content-type','application/json'), ('charset','UTF-8')]
-            start_response(status, headers)
-            return [response]
+        start_response(status, headers)
+        try:
+            answer = atable.get_item(hash_key=answerID)
+            if vote == "up":
+                answer.add_attribute("rank", 1)
+            else if vote == "down":
+                answer.add_attribute("rank", -1)
+            conn.put(answer)
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":0}))
+            else:
+                return json.dumps({"daffodil":0})
+        except:
+            if 'callback' in parameters:
+                return jsonp(callback_function, json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete answer %s from DynamoDB" % answerID}))
+            else:
+                return json.dumps(json.dumps({"daffodil":1, "errormsg":"Something went wrong when trying to delete answer %s from DynamoDB" % answerID}))
     else:
         return not_found(environ, start_response)
     
@@ -535,6 +536,7 @@ urls = [
     (r'deletequestion/?$', deleteQuestion),
     (r'deleteanswer/?$', deleteAnswer),
     (r'deleteeverything/?$', deleteEverything),
+    (r'voteanswer/?$', voteAnswer),
 ]
 def application(environ, start_response):
     """
