@@ -1,8 +1,11 @@
 from dynamodb_mapper.model import DynamoDBModel
 from dynamodb_mapper.model import ConnectionBorg
-from string import join
+from django.db import models
 #from settings import MEDIA_ROOT
 from boto.dynamodb import condition
+from django.db.models.signals import post_save
+from django.contrib.auth.models import User
+
 
 conn = ConnectionBorg()
 conn.set_region('us-west-2')
@@ -45,3 +48,20 @@ class Answers(DynamoDBModel):
     }
     def __unicode__(self):
         return self.answer
+
+    
+class UserProfile(models.Model):
+    posts = models.IntegerField(default=0)
+    user = models.ForeignKey(User, unique=True)
+
+    def __unicode__(self):
+        return unicode(self.user)
+
+
+def create_user_profile(sender, **kwargs):
+    """When creating a new user, make a profile for him."""
+    u = kwargs["instance"]
+    if not UserProfile.objects.filter(user=u):
+        UserProfile(user=u).save()
+
+post_save.connect(create_user_profile, sender=User)
