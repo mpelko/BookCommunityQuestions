@@ -211,14 +211,14 @@ function makePanel() {
     var container = document.getElementById("KindleReaderContainer");
     var qcontent = document.createElement("div");
    
-    document.body.style.background = "#e8e8e0"; // "#f2f2e2";
-    qcontent.style.background = "#e8e8e0"; // "#f2f2e2";
+    document.body.style.background = "#545454"; // "#f2f2e2";
+    qcontent.style.background = "#545454"; // "#f2f2e2";
     qcontent.id = "question_content";
     qcontent.style.position = "absolute";
     qcontent.style.float = "left";
     qcontent.style.width = "30%";
     qcontent.style.height = "100%";
-    qcontent.style.overflowX = "scroll";
+    qcontent.style.overflowY = "scroll";
     qcontent.style.top = "0";
     qcontent.style.right = "0";
     qcontent.isout = false;
@@ -243,7 +243,7 @@ function makePanel() {
     newbutton.appendChild(button_text_span);
     contentinner.appendChild(newbutton);
     
-    qcontent.innerHTML += '<div id="bcq_q-2"><p style="font-style:italic;">Loading...</p></div><div id="bcq_q-1"><p style="font-style:italic;display:none;">No questions here.</p></div>';
+    contentinner.innerHTML += '<div id="bcq_q-2"><p style="font-style:italic;">Loading...</p></div><div id="bcq_q-1"><p style="font-style:italic;display:none;">No questions here.</p></div>';
     
     qcontent.appendChild(contentinner);
     container.appendChild(qcontent);
