@@ -405,6 +405,7 @@ function make_qnode(Q) {
     i.id='bcq_q' + Q.questionID + '_answbutton';
     i.qid=Q.questionID;
     i.type="submit";
+    i.className = "bcq_button";
     i.value="Add answer";
     i.addEventListener('click', sendAnswerForm);
     var e = document.createElement('p');
