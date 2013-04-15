@@ -1,22 +1,40 @@
-<!-- Forums  -->
-<div id="list">
-<table border="0" cellpadding="4" width="100%">
-    <tr>
-        <td>Book title</td>
-        <td>Nr. of questions</td>
-        <td></td>
-    </tr>
+{% extends "fbase.html" %}
 
-    {% for book in books %}
-    <tr>
-        <td {% if forloop.last %}class="last"{% endif %}>
-        <div class="title"><a href="{% url "BCAforum.views.book" book.bookID %}"> {{ book.title }}</a>
-            </div></td>
-        <td {% if forloop.last %}class="last"{% endif %}>{{ book.num_quest }}</td>
-        <td {% if forloop.last %}class="last"{% endif %}>
-            <a class="button" href="{% url "BCAforum.views.book" book.bookID %}">VIEW</a>
-        </td>
-    </tr>
-    {% endfor %}
-</div>
+{% block sidebar %} <style type="text/css"> </style> {% endblock %}
 
+{% block content %}
+
+        <style type="text/css">
+            .main { margin-left: 25px; margin-top: 30px; }
+            .title { font-size: 1.4em; margin-top: 10px; border-bottom: 0px solid #ccc; padding-left: 4px; }
+            .last { border: 0px; }
+            .title a { text-decoration: none; }
+            .button { background: #999; color: white; padding: 4px; text-decoration: none; }
+    
+            td { border-bottom: 1px solid #ccc; }
+            #list { border: 1px solid #ccc; width: 700px; }
+        </style>
+    
+    <!-- Books  -->
+    <div id="list">
+    <table border="0" cellpadding="4" width="100%">
+        <tr>
+            <td>Book title</td>
+            <td>Nr. of questions</td>
+            <td></td>
+        </tr>
+    
+        {% for book in books %}
+        <tr>
+            <td {% if forloop.last %}class="last"{% endif %}>
+            <div class="title"><a href="{% url "BCAforum.views.book" book.bookID %}"> {{ book.title }}</a>
+                </div></td>
+            <td {% if forloop.last %}class="last"{% endif %}>{{ book.num_quest }}</td>
+            <td {% if forloop.last %}class="last"{% endif %}>
+                <a class="button" href="{% url "BCAforum.views.book" book.bookID %}">VIEW</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </div>
+    
+{% endblock %}

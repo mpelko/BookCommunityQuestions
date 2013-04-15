@@ -1,10 +1,17 @@
 from django.template.loader import get_template
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
-from models import Books, Questions, Answers
-from django.http import HttpResponse
+from models import Books, Questions, Answers, UserProfile
 from boto.dynamodb import condition
 from django.core.context_processors import csrf
+from django.http import HttpResponseRedirect, HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.forms import ModelForm
+
+class ProfileForm(ModelForm):
+    class Meta:
+        model = UserProfile
+        exclude = ["posts", "user"]
 
 def main(request):
     """Main listing."""
@@ -43,7 +50,7 @@ def question(request, pk):
     
 def post(request, ptype, pk):
     """Display a post form."""
-    action = reverse("dbe.BCAforum.views.%s" % ptype, args=[pk])
+    action = reverse("BCAforum.views.%s" % ptype, args=[pk])
     if ptype == "new_thread":
         title = "Ask a question"
         subject = ''
@@ -53,16 +60,39 @@ def post(request, ptype, pk):
 
     return render_to_response("question.html", add_csrf(request, subject=subject,
         action=action, title=title))
-    
+
+def increment_post_counter(request):
+    profile = request.user.userprofile_set.all()[0]
+    profile.posts += 1
+    profile.save()
+
 def new_question(request, pk):
-    #"""Start a new thread."""
-    #p = request.POST
-    #if p["subject"] and p["body"]:
-    #    forum = Forum.objects.get(pk=pk)
-    #    thread = Thread.objects.create(forum=forum, title=p["subject"], creator=request.user)
-    #    Post.objects.create(thread=thread, title=p["subject"], body=p["body"], creator=request.user)
-    #return HttpResponseRedirect(reverse("dbe.forum.views.forum", args=[pk]))
-    pass
+    """Start a new thread."""
+    p = request.POST
+    if p["body"]:
+        q=Questions()
+        q.title=p["body"]
+        q.username=request.user
+        q.bookID=pk
+        q.save()
+        increment_post_counter(request)
+    return HttpResponseRedirect(reverse("BCAforum.views.forum", args=[pk]))
+
+@login_required
+def profile(request, pk):
+    """Edit user profile."""
+    profile = UserProfile.objects.get(user=pk)
+
+    if request.method == "POST":
+        pf = ProfileForm(request.POST, request.FILES, instance=profile)
+        if pf.is_valid():
+            pf.save()
+            # resize and save image under same filename
+    else:
+        pf = ProfileForm(instance=profile)
+
+    return render_to_response("profile.html", add_csrf(request, pf=pf))
+
 
 def reply(request, pk):
     #"""Reply to a thread."""
