@@ -28,10 +28,22 @@ function QA_update_all_AWSDB(book_id)
     $.getJSON( url + "&callback=?", null,  handle_JSON);
 }
 
-function send_question_AWSDB(question, usr, book_id, location, element_handle)
+function send_question_AWSDB(question, usr, book_id, location)
 {
     var url = AWS_url + "/addquestion/"
     var data = {"question":question, "username":usr, "bookID":book_id, "location":location}
+    
+    function handle_JSON(data){
+            update_all_QA(book_id);
+    }
+        
+    $.getJSON( url + "?callback=?", data, handle_JSON);
+}
+    
+function send_answer_AWSDB(answer, usr, q_id, book_id, element_handle)
+{
+    var url = AWS_url + "/addanswer/"
+    var data = {"answer":answer, "username":usr, "questionID":q_id}
     
     function handle_JSON(data){
         if(data["daffodil"]==0)
@@ -43,18 +55,6 @@ function send_question_AWSDB(question, usr, book_id, location, element_handle)
         {
             answerSendFailure(element_handle)
         }
-        
-    $.getJSON( url + "?callback=?", data, handle_JSON);
-
-}
-    
-function send_answer_AWSDB(answer, usr, q_id, book_id)
-{
-    var url = AWS_url + "/addanswer/"
-    var data = {"answer":answer, "username":usr, "questionID":q_id}
-    
-    function handle_JSON(data){
-        update_all_QA(book_id);
     }
         
     $.getJSON( url + "?callback=?", data, handle_JSON);
